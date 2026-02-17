@@ -1,0 +1,29 @@
+### TaskTracker stub - Create folders for datasource test suites
+### Run with REST Client (VS Code) or similar. Base URL: http://localhost:8000
+
+### Create Postgres datasource folder
+POST http://localhost:8000/folders
+Content-Type: application/json
+
+{
+  "name": "postgres datasource",
+  "parent_id": null
+}
+
+### Create Prometheus datasource folder
+POST http://localhost:8000/folders
+Content-Type: application/json
+
+{
+  "name": "prometheus datasource",
+  "parent_id": null
+}
+
+### Create Abyss datasource folder (custom)
+POST http://localhost:8000/folders
+Content-Type: application/json
+
+{
+  "name": "abyss datasource",
+  "parent_id": null
+}

@@ -1,0 +1,86 @@
+### Prometheus datasource - UI test cases (realistic Grafana flows)
+
+### 1. Prometheus connection and Save & Test
+POST http://localhost:8000/test-cases
+Content-Type: application/json
+
+{
+  "folder": "prometheus datasource",
+  "name": "Prometheus datasource connection",
+  "description": "Verify Prometheus URL and connection in Configuration.",
+  "steps": [
+    "Go to Configuration → Data sources",
+    "Add data source → Prometheus",
+    "Set URL (e.g. http://prometheus:9090) and access mode",
+    "Click Save & Test",
+    "Verify 'Data source is working'"
+  ]
+}
+
+### 2. Explore – PromQL and instant/range
+POST http://localhost:8000/test-cases
+Content-Type: application/json
+
+{
+  "folder": "prometheus datasource",
+  "name": "Explore PromQL and switch instant/range",
+  "description": "Run PromQL in Explore and toggle between instant and range query.",
+  "steps": [
+    "Open Explore and select Prometheus",
+    "Enter query e.g. up",
+    "Click Run query, verify time series or table result",
+    "Switch query type to Instant and run again",
+    "Verify result matches instant query semantics"
+  ]
+}
+
+### 3. Graph panel with legend and time range
+POST http://localhost:8000/test-cases
+Content-Type: application/json
+
+{
+  "folder": "prometheus datasource",
+  "name": "Time series panel with legend and time range",
+  "description": "Add a Prometheus-backed graph and check legend and time range behavior.",
+  "steps": [
+    "Add panel → Time series, datasource Prometheus",
+    "Add query e.g. rate(http_requests_total[5m])",
+    "Apply and verify graph renders",
+    "Check legend shows series names and values",
+    "Change dashboard time range and verify graph updates"
+  ]
+}
+
+### 4. Multi-query and legend formatting
+POST http://localhost:8000/test-cases
+Content-Type: application/json
+
+{
+  "folder": "prometheus datasource",
+  "name": "Multiple queries and legend format",
+  "description": "Panel with several PromQL queries and custom legend format.",
+  "steps": [
+    "Add Time series panel with Prometheus",
+    "Add two queries e.g. rate(a_total[5m]), rate(b_total[5m])",
+    "Set Legend mode and format e.g. {{job}} - {{instance}}",
+    "Apply and verify both series appear with formatted legend",
+    "Toggle legend values (e.g. Last, Mean) and verify values update"
+  ]
+}
+
+### 5. Alert rule with Prometheus
+POST http://localhost:8000/test-cases
+Content-Type: application/json
+
+{
+  "folder": "prometheus datasource",
+  "name": "Alert rule using Prometheus query",
+  "description": "Create an alert that evaluates a Prometheus expression.",
+  "steps": [
+    "Edit dashboard and add panel with Prometheus query",
+    "Open panel → Alert tab → Create alert rule",
+    "Set condition (e.g. WHEN last() OF query A IS ABOVE 1)",
+    "Configure contact point and save",
+    "Trigger condition if possible and verify notification or state change"
+  ]
+}

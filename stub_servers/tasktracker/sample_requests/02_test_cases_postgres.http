@@ -1,0 +1,90 @@
+### Postgres datasource - UI test cases (realistic Grafana flows)
+### Replace {{folder_id}} with actual folder id from GET /folders, or use folder name if stub accepts it.
+### Below uses folder NAME so GET /test-cases?folder=postgres%20datasource works.
+
+### 1. Datasource connection and health check
+POST http://localhost:8000/test-cases
+Content-Type: application/json
+
+{
+  "folder": "postgres datasource",
+  "name": "Datasource connection and Save & Test",
+  "description": "Verify Postgres datasource connects and health check passes in Configuration.",
+  "steps": [
+    "Navigate to Configuration → Data sources",
+    "Click Add data source and select PostgreSQL",
+    "Fill host, database, user, and SSL mode",
+    "Click Save & Test",
+    "Verify green banner 'Database Connection OK'"
+  ]
+}
+
+### 2. Explore – run SQL and see table result
+POST http://localhost:8000/test-cases
+Content-Type: application/json
+
+{
+  "folder": "postgres datasource",
+  "name": "Explore SQL query returns table",
+  "description": "Run a simple SQL query in Explore and confirm table result appears.",
+  "steps": [
+    "Open Explore from sidebar or dashboard panel",
+    "Select PostgreSQL datasource",
+    "Enter query: SELECT 1 AS value",
+    "Click Run query",
+    "Verify Table view shows one row with column 'value'"
+  ]
+}
+
+### 3. Table panel with Postgres query
+POST http://localhost:8000/test-cases
+Content-Type: application/json
+
+{
+  "folder": "postgres datasource",
+  "name": "Table panel with SQL and time column",
+  "description": "Add a table panel using Postgres query and optional time column for dashboard time range.",
+  "steps": [
+    "Create or edit a dashboard",
+    "Add visualization → Table",
+    "Set datasource to PostgreSQL",
+    "Enter query with time column e.g. SELECT time, metric FROM series WHERE $__timeFilter(time)",
+    "Apply and set dashboard time range",
+    "Verify table renders with correct columns and rows"
+  ]
+}
+
+### 4. Time series from Postgres
+POST http://localhost:8000/test-cases
+Content-Type: application/json
+
+{
+  "folder": "postgres datasource",
+  "name": "Time series panel from Postgres query",
+  "description": "Build a time series graph from a Postgres query with time and value columns.",
+  "steps": [
+    "Add panel and choose Time series visualization",
+    "Select PostgreSQL datasource",
+    "Write query returning time column and at least one value column",
+    "Map Format as: Time series in query options",
+    "Apply and verify graph renders for current time range"
+  ]
+}
+
+### 5. Variables and Postgres
+POST http://localhost:8000/test-cases
+Content-Type: application/json
+
+{
+  "folder": "postgres datasource",
+  "name": "Dashboard variable from Postgres query",
+  "description": "Create a dropdown variable backed by a Postgres query and use it in a panel.",
+  "steps": [
+    "Edit dashboard → Variables → Add variable",
+    "Set type to Query, datasource to PostgreSQL",
+    "Enter query e.g. SELECT DISTINCT name FROM services",
+    "Save and apply variable",
+    "Add panel with query that uses variable (e.g. WHERE service = '$service')",
+    "Change variable value and verify panel updates"
+  ]
+}

@@ -1,0 +1,1992 @@
+openapi: 3.1.0
+info:
+  title: sbertrack
+  description: Система управление элементами производственного процесса
+  contact:
+    name: sbertrack
+    email: sbertrack@sbertech.ru
+  license:
+    name: Apache 2.0
+    url: http://springdoc.org
+  version: 34.0.3
+servers:
+  - url: https://portal.works.prod.sbt/swtr
+    description: local
+tags:
+  - name: EntityRankMutation
+    description: API изменения ранга сущности
+  - name: SafeData API
+    description: Операции с генерацией тестовых данных в SafeData
+paths:
+  /extension/plugin/v2/rest/api/swtr_tms_plugin/v1/folder/root/units:
+    description: Иерархическая структура папок от корня с содержащимися задачами
+    post:
+      tags:
+        - Test Management System
+      summary: Иерархическая структура папок от корня с содержащимися задачами
+      operationId: getRootFolderHierarchyWithUnits
+      requestBody:
+        description: Запрос структуры от корневой папки с юнитами
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetRootUnitFolderRq'
+              additionalProperties: false
+              description: Запрос на получения структуры папок от корня с юнитами
+              required:
+                - getRootFolderRq
+                - unitFilters
+              example: null
+            examples:
+              Пример запроса корневой папки с юнитами:
+                description: Запрос структуры от корневой папки с юнитам
+                value:
+                  getRootFolderRq:
+                    type: TEST_CASE
+                    spaceId:
+                      code: TMS
+                  linkedTo:
+                    code: TMS-5
+                  unitFilters:
+                    page:
+                      page: 0
+                      size: 10
+        required: true
+      responses:
+        '200':
+          description: Иерархическая структура папок от корня с содержащимися задачами
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FolderUnitsDto'
+                additionalProperties: false
+                description: Информация о папке и юнитах в ней
+                required:
+                  - folderHierarchy
+                  - units
+                example: null
+              examples:
+                success:
+                  description: Иерархия папок и юниты
+                  value:
+                    folderHierarchy:
+                      id:
+                        code: TMS_test_case
+                      key: TMS_test_case
+                      title: Все тест-кейсы
+                      children:
+                        - id:
+                            code: d58c8d9f-aa53-4f85-977e-985ddbb4e1d5
+                          key: d58c8d9f-aa53-4f85-977e-985ddbb4e1d5
+                          title: new_name
+                          children:
+                            - id:
+                                code: 26123c25-e7bb-43cb-9840-38268c075247
+                              key: 26123c25-e7bb-43cb-9840-38268c075247
+                              title: test6
+                              children: []
+                    units:
+                      content:
+                        - unit:
+                            code: TMS-3
+                            summary: TK!!!
+                            description: '{"type":"doc","content":[{"type":"paragraph","attrs":{"id":null,"indent":0,"textAlign":"justify"},"content":[{"type":"text","text":"test"}]}]}'
+                            suit:
+                              code: test_case
+                              name: Тест-кейс
+                              icon: memo_pencil
+                            space:
+                              code: TMS
+                              name: Пространство TMS
+                            spaces:
+                              - code: TMS
+                                name: Пространство TMS
+                            createdBy:
+                              externalId: '100002'
+                              firstName: Иван
+                              lastName: Тестов
+                              middleName: Иванович
+                              login: ivantestov
+                              userDetails: []
+                            createdAt: '2025-08-18T20:07:11.787194Z'
+                            updatedBy:
+                              externalId: '100002'
+                              firstName: Иван
+                              lastName: Тестов
+                              middleName: Иванович
+                              login: ivantestov
+                              userDetails: []
+                            updatedAt: '2025-08-21T06:58:43.287526Z'
+                            isFavorite: false
+                            descriptionPlain: null
+                          attributes: []
+                          calculatedAttributes: []
+                      pageSize: 10
+                      hasNext: false
+                      pageNumber: 0
+                      totalElements: 1
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/ErrorDTO'
+                additionalProperties: false
+                description: Ответ в случае ошибки
+                required:
+                  - exceptionUUID
+                  - uiErrorMessage
+                example: null
+              examples:
+                forbidden:
+                  description: Ошибка запроса
+                  value:
+                    exceptionUUID: 18pE95Ic93
+                    uiErrorMessage: '-'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/ErrorDTO'
+                additionalProperties: false
+                description: Ответ в случае ошибки
+                required:
+                  - exceptionUUID
+                  - uiErrorMessage
+                example: null
+              examples:
+                forbidden:
+                  description: Ошибка доступа
+                  value:
+                    exceptionUUID: 18pE95Ic93
+                    uiErrorMessage: Доступ запрещен. Проверьте наличие необходимых прав
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/ErrorDTO'
+                additionalProperties: false
+                description: Ответ в случае ошибки
+                required:
+                  - exceptionUUID
+                  - uiErrorMessage
+                example: null
+              examples:
+                not_found:
+                  description: Элемент не найден
+                  value:
+                    exceptionUUID: 18pE95Ic93
+                    uiErrorMessage: 'Элемент ''AnyObj'' с идентификатором ''ANY'' не найден '
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/ErrorDTO'
+                additionalProperties: false
+                description: Ответ в случае ошибки
+                required:
+                  - exceptionUUID
+                  - uiErrorMessage
+                example: null
+              examples:
+                server_error:
+                  description: Неизвестная серверная ошибка
+                  value:
+                    exceptionUUID: 18pE95Ic93
+                    uiErrorMessage: Неизвестная ошибка
+  /extension/plugin/v2/rest/api/swtr_tms_plugin/v1/folder/create:
+    description: Создание папки
+    post:
+      tags:
+        - Test Management System
+      summary: Создание папки
+      operationId: createFolder
+      requestBody:
+        description: Тело запроса для создания папки
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateFolderRq'
+              additionalProperties: false
+              description: Запрос на cоздание папки
+              required:
+                - name
+                - parentId
+                - spaceId
+              example: null
+            examples:
+              Пример запроса на создание папки:
+                description: Создание папки в папке TMS_test_case
+                value:
+                  name: test5
+                  parentId:
+                    code: TMS_test_case
+                  spaceId:
+                    code: TMS
+        required: true
+      responses:
+        '200':
+          description: Папка создана
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FolderDto'
+                additionalProperties: false
+                description: Информация о папке
+                required:
+                  - children
+                  - id
+                  - key
+                  - title
+                example: null
+              examples:
+                success:
+                  description: Создание новой подпапки
+                  value:
+                    id:
+                      code: d58c8d9f-aa53-4f85-977e-985ddbb4e1d5
+                    key: d58c8d9f-aa53-4f85-977e-985ddbb4e1d5
+                    title: test5
+                    children: []
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/ErrorDTO'
+                additionalProperties: false
+                description: Ответ в случае ошибки
+                required:
+                  - exceptionUUID
+                  - uiErrorMessage
+                example: null
+              examples:
+                forbidden:
+                  description: Ошибка запроса
+                  value:
+                    exceptionUUID: 18pE95Ic93
+                    uiErrorMessage: '-'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/ErrorDTO'
+                additionalProperties: false
+                description: Ответ в случае ошибки
+                required:
+                  - exceptionUUID
+                  - uiErrorMessage
+                example: null
+              examples:
+                forbidden:
+                  description: Ошибка доступа
+                  value:
+                    exceptionUUID: 18pE95Ic93
+                    uiErrorMessage: Доступ запрещен. Проверьте наличие необходимых прав
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/ErrorDTO'
+                additionalProperties: false
+                description: Ответ в случае ошибки
+                required:
+                  - exceptionUUID
+                  - uiErrorMessage
+                example: null
+              examples:
+                not_found:
+                  description: Элемент не найден
+                  value:
+                    exceptionUUID: 18pE95Ic93
+                    uiErrorMessage: 'Элемент ''AnyObj'' с идентификатором ''ANY'' не найден '
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/ErrorDTO'
+                additionalProperties: false
+                description: Ответ в случае ошибки
+                required:
+                  - exceptionUUID
+                  - uiErrorMessage
+                example: null
+              examples:
+                server_error:
+                  description: Неизвестная серверная ошибка
+                  value:
+                    exceptionUUID: 18pE95Ic93
+                    uiErrorMessage: Неизвестная ошибка
+  /extension/plugin/v2/rest/api/swtr_tms_plugin/v1/folder/hierarchy/{folder_code}/units/filtered:
+    description: Иерархическая структура папок от заданной с отфильтрованными содержащимися задачами
+    post:
+      tags:
+        - Test Management System
+      summary: Иерархическая структура папок от заданной с отфильтрованными содержащимися задачами
+      operationId: getFolderHierarchyAndUnits_1
+      parameters:
+        - name: folder_code
+          in: path
+          description: Код папки, от которой строится иерархия
+          required: true
+          schema:
+            type: string
+            example: Пример
+            maxLength: 2147483647
+            pattern: .*
+          example: TMS_test_case
+      requestBody:
+        description: Постраничный запрос на получение иерархии папок и привязанных к задаче юнитов
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FolderUnitsRq'
+              additionalProperties: false
+              description: Запрос на получение структуры папок и отфильтрованных юнитов
+              required:
+                - type
+                - unitFilters
+              example: null
+            examples:
+              Пример запроса:
+                description: Запрос на получение структуры папок и отфильтрованных юнитов
+                value:
+                  type: TEST_CASE
+                  linkedTo:
+                    code: TMS-5
+                  unitFilters:
+                    page:
+                      page: 0
+                      size: 10
+        required: true
+      responses:
+        '200':
+          description: Иерархическая структура папок от заданной с отфильтрованными содержащимися задачами"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FolderUnitsDto'
+                additionalProperties: false
+                description: Информация о папке и юнитах в ней
+                required:
+                  - folderHierarchy
+                  - units
+                example: null
+              examples:
+                success:
+                  description: Иерархия папок от заданной и юниты в ней
+                  value:
+                    folderHierarchy:
+                      id:
+                        code: TMS_test_case
+                      key: TMS_test_case
+                      title: Все тест-кейсы
+                      children:
+                        - id:
+                            code: d58c8d9f-aa53-4f85-977e-985ddbb4e1d5
+                          key: d58c8d9f-aa53-4f85-977e-985ddbb4e1d5
+                          title: new_name
+                          children:
+                            - id:
+                                code: 26123c25-e7bb-43cb-9840-38268c075247
+                              key: 26123c25-e7bb-43cb-9840-38268c075247
+                              title: test6
+                              children: []
+                    units:
+                      content:
+                        - unit:
+                            code: TMS-3
+                            summary: TK!!!
+                            description: '{"type":"doc","content":[{"type":"paragraph","attrs":{"id":null,"indent":0,"textAlign":"justify"},"content":[{"type":"text","text":"test"}]}]}'
+                            suit:
+                              code: test_case
+                              name: Тест-кейс
+                              icon: memo_pencil
+                            space:
+                              code: TMS
+                              name: Пространство TMS
+                            spaces:
+                              - code: TMS
+                                name: Пространство TMS
+                            createdBy:
+                              externalId: '100002'
+                              firstName: Иван
+                              lastName: Тестов
+                              middleName: Иванович
+                              login: ivantestov
+                              userDetails: []
+                            createdAt: '2025-08-18T20:07:11.787194Z'
+                            updatedBy:
+                              externalId: '100002'
+                              firstName: Иван
+                              lastName: Тестов
+                              middleName: Иванович
+                              login: ivantestov
+                              userDetails: []
+                            updatedAt: '2025-08-21T06:58:43.287526Z'
+                            isFavorite: false
+                            descriptionPlain: null
+                          attributes: []
+                          calculatedAttributes: []
+                      pageSize: 10
+                      hasNext: false
+                      pageNumber: 0
+                      totalElements: 1
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/ErrorDTO'
+                additionalProperties: false
+                description: Ответ в случае ошибки
+                required:
+                  - exceptionUUID
+                  - uiErrorMessage
+                example: null
+              examples:
+                forbidden:
+                  description: Ошибка запроса
+                  value:
+                    exceptionUUID: 18pE95Ic93
+                    uiErrorMessage: '-'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/ErrorDTO'
+                additionalProperties: false
+                description: Ответ в случае ошибки
+                required:
+                  - exceptionUUID
+                  - uiErrorMessage
+                example: null
+              examples:
+                forbidden:
+                  description: Ошибка доступа
+                  value:
+                    exceptionUUID: 18pE95Ic93
+                    uiErrorMessage: Доступ запрещен. Проверьте наличие необходимых прав
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/ErrorDTO'
+                additionalProperties: false
+                description: Ответ в случае ошибки
+                required:
+                  - exceptionUUID
+                  - uiErrorMessage
+                example: null
+              examples:
+                not_found:
+                  description: Элемент не найден
+                  value:
+                    exceptionUUID: 18pE95Ic93
+                    uiErrorMessage: 'Элемент ''AnyObj'' с идентификатором ''ANY'' не найден '
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/ErrorDTO'
+                additionalProperties: false
+                description: Ответ в случае ошибки
+                required:
+                  - exceptionUUID
+                  - uiErrorMessage
+                example: null
+              examples:
+                server_error:
+                  description: Неизвестная серверная ошибка
+                  value:
+                    exceptionUUID: 18pE95Ic93
+                    uiErrorMessage: Неизвестная ошибка
+  /rest/api/unit/v2/{suit}/create:
+    description: Создает новую задачу с заданным типом атрибута
+    post:
+      tags:
+        - API создания/изменения задачи (v2)
+      summary: Создает новую задачу с заданным типом атрибута
+      operationId: create_4
+      parameters:
+        - name: suit
+          in: path
+          description: Код типа задачи
+          required: true
+          schema:
+            type: string
+            example: Пример
+            maxLength: 2147483647
+            pattern: .*
+          example: task
+      requestBody:
+        description: Создание задачи
+        content:
+          application/json:
+            schema:
+              type: string
+              additionalProperties: false
+              description: Запрос на создание задачи
+              example: Пример
+              maxLength: 2147483647
+              pattern: .*
+            examples:
+              Пример:
+                description: Пример
+                value:
+                  summary: Новая задача
+                  description: Новая задача
+                  space: SWTR
+                  attributes:
+                    priority: mid
+                    workflow_status:
+                      command: NEW
+        required: true
+      responses:
+        '200':
+          description: Успешное изменение объекта
+          headers:
+            Location:
+              description: URL для получения объекта
+              style: simple
+              schema:
+                type: string
+                format: uri
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateResponse'
+                additionalProperties: false
+                description: Успешное изменение объекта
+                example:
+                  id: ANYSPC
+                required:
+                  - id
+              examples:
+                success:
+                  description: Успешное изменение объекта с кодом ANYSPC
+                  value:
+                    id: ANYSPC
+        '201':
+          description: Успешное изменение объекта
+          headers:
+            Location:
+              description: URL для получения объекта
+              style: simple
+              schema:
+                type: string
+                format: uri
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateResponse'
+                additionalProperties: false
+                description: Успешное изменение объекта
+                example:
+                  id: ANYSPC
+                required:
+                  - id
+              examples:
+                success:
+                  description: Успешное изменение объекта с кодом ANYSPC
+                  value:
+                    id: ANYSPC
+        '204':
+          description: Успешное удаление объекта
+          headers:
+            Location:
+              description: URL для получения объекта
+              style: simple
+              schema:
+                type: string
+                format: uri
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateResponse'
+                additionalProperties: false
+                description: Успешное удаление объекта
+                example:
+                  id: ANYSPC
+                required:
+                  - id
+              examples:
+                success:
+                  description: Успешное удаление объекта с кодом ANYSPC
+                  value:
+                    id: ANYSPC
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/ErrorDTO'
+                additionalProperties: false
+                description: Ответ в случае ошибки
+                required:
+                  - exceptionUUID
+                  - uiErrorMessage
+                example: null
+              examples:
+                forbidden:
+                  description: Ошибка запроса
+                  value:
+                    exceptionUUID: 18pE95Ic93
+                    uiErrorMessage: '-'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/ErrorDTO'
+                additionalProperties: false
+                description: Ответ в случае ошибки
+                required:
+                  - exceptionUUID
+                  - uiErrorMessage
+                example: null
+              examples:
+                forbidden:
+                  description: Ошибка доступа
+                  value:
+                    exceptionUUID: 18pE95Ic93
+                    uiErrorMessage: Доступ запрещен. Проверьте наличие необходимых прав
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/ErrorDTO'
+                additionalProperties: false
+                description: Ответ в случае ошибки
+                required:
+                  - exceptionUUID
+                  - uiErrorMessage
+                example: null
+              examples:
+                not_found:
+                  description: Элемент не найден
+                  value:
+                    exceptionUUID: 18pE95Ic93
+                    uiErrorMessage: 'Элемент ''AnyObj'' с идентификатором ''ANY'' не найден '
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/ErrorDTO'
+                additionalProperties: false
+                description: Ответ в случае ошибки
+                required:
+                  - exceptionUUID
+                  - uiErrorMessage
+                example: null
+              examples:
+                server_error:
+                  description: Неизвестная серверная ошибка
+                  value:
+                    exceptionUUID: 18pE95Ic93
+                    uiErrorMessage: Неизвестная ошибка
+  /rest/api/unit/v2/{code}:
+    description: Получение юнита с атрибутами по его коду
+    get:
+      tags:
+        - API поиска юнита V3 с отдельным запросом полного кол-ва записей
+        - API поиска юнита
+      summary: Получение юнита с атрибутами по его коду
+      operationId: get_4
+      parameters:
+        - name: code
+          in: path
+          description: code
+          required: true
+          schema:
+            type: string
+            example: Пример
+            maxLength: 2147483647
+            pattern: .*
+          example: Пример
+        - name: validatorEnabled
+          in: query
+          description: validatorEnabled
+          required: false
+          schema:
+            type: boolean
+            example: true
+          example: 'true'
+      responses:
+        '200':
+          description: Информация о юните
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnitWithAttributes'
+                additionalProperties: false
+                description: Информация о юните
+                required:
+                  - code
+                  - space
+                  - suit
+                example: null
+              examples:
+                success:
+                  description: Описание юнита
+                  value:
+                    code: DEVK4ABQX-1
+                    summary: демо 1509
+                    description: демо 1509
+                    isFavorite: false
+                    createdAt: '2025-01-28T09:13:20.998448Z'
+                    createdBy:
+                      externalId: '200002'
+                      firstName: Тест_ALL_ROLES
+                      lastName: Тестыч
+                      middleName: null
+                      login: test
+                      userDetails: []
+                    updatedAt: '2025-01-28T09:13:20.998448Z'
+                    updatedBy:
+                      externalId: '200002'
+                      firstName: Тест_ALL_ROLES
+                      lastName: Тестыч
+                      middleName: null
+                      login: test
+                      userDetails: []
+                    suit:
+                      code: task
+                      name: Поменяем название пользовательской истории
+                      icon: super_idea
+                    space:
+                      code: DEVK4ABQX
+                      name: Демо спейс
+                    attributes:
+                      - code: assigned_to
+                        name: Исполнитель
+                        type: user
+                        value:
+                          externalId: '100000'
+                          firstName: Василий_ROLE_TENANT_CONFIG
+                          lastName: Кузякин
+                          middleName: Егорович
+                          login: vasiakuzyakin
+                          userDetails: []
+                        parameters: {}
+                      - code: due_date
+                        name: Контрольный срок
+                        type: date_time
+                        value: null
+                        parameters: {}
+                      - code: estimate
+                        name: Трудозатраты
+                        type: non_negative_int
+                        value: 6
+                        parameters: {}
+                      - code: label
+                        name: Метки
+                        type: label
+                        value: null
+                        parameters: {}
+                      - code: priority
+                        name: Приоритет
+                        type: taxonomy
+                        value: null
+                        parameters: {}
+                      - code: reporter
+                        name: Постановщик
+                        type: user
+                        value: null
+                        parameters:
+                          ORDER: 4
+                          MANDATORY: false
+                      - code: status
+                        name: Статус
+                        type: taxonomy
+                        value: null
+                        parameters: {}
+                      - code: story_points
+                        name: Относительная сложность
+                        type: non_negative_int
+                        value: 3
+                        parameters: {}
+                      - code: workflow_status
+                        name: Статус
+                        type: workflow_status
+                        value: null
+                        parameters: {}
+                    validatorErrorMsgs: null
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/ErrorDTO'
+                additionalProperties: false
+                description: Ответ в случае ошибки
+                required:
+                  - exceptionUUID
+                  - uiErrorMessage
+                example: null
+              examples:
+                forbidden:
+                  description: Ошибка запроса
+                  value:
+                    exceptionUUID: 18pE95Ic93
+                    uiErrorMessage: '-'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/ErrorDTO'
+                additionalProperties: false
+                description: Ответ в случае ошибки
+                required:
+                  - exceptionUUID
+                  - uiErrorMessage
+                example: null
+              examples:
+                forbidden:
+                  description: Ошибка доступа
+                  value:
+                    exceptionUUID: 18pE95Ic93
+                    uiErrorMessage: Доступ запрещен. Проверьте наличие необходимых прав
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/ErrorDTO'
+                additionalProperties: false
+                description: Ответ в случае ошибки
+                required:
+                  - exceptionUUID
+                  - uiErrorMessage
+                example: null
+              examples:
+                not_found:
+                  description: Элемент не найден
+                  value:
+                    exceptionUUID: 18pE95Ic93
+                    uiErrorMessage: 'Элемент ''AnyObj'' с идентификатором ''ANY'' не найден '
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/ErrorDTO'
+                additionalProperties: false
+                description: Ответ в случае ошибки
+                required:
+                  - exceptionUUID
+                  - uiErrorMessage
+                example: null
+              examples:
+                server_error:
+                  description: Неизвестная серверная ошибка
+                  value:
+                    exceptionUUID: 18pE95Ic93
+                    uiErrorMessage: Неизвестная ошибка
+  /rest/api/unit/v2/update/{code}:
+    description: Обновляет существующую задачу по его коду
+    patch:
+      tags:
+        - API создания/изменения задачи (v2)
+      summary: Обновляет существующую задачу по его коду
+      operationId: update_8
+      parameters:
+        - name: code
+          in: path
+          description: Код задачи
+          required: true
+          schema:
+            type: string
+            example: Пример
+            maxLength: 2147483647
+            pattern: .*
+          example: SWTR-1
+      requestBody:
+        description: Изменение задачи
+        content:
+          application/json:
+            schema:
+              type: string
+              additionalProperties: false
+              description: Запрос на изменение задачи
+              example: Пример
+              maxLength: 2147483647
+              pattern: .*
+            examples:
+              Пример:
+                description: Пример
+                value:
+                  summary: Новая задача
+                  description: Новая задача
+                  attributes:
+                    due_date: '2023-08-10T12:01:18Z'
+                    priority: mid
+                    label:
+                      - mega task
+                      - not idea
+                    assigned_to: '100002'
+        required: true
+      responses:
+        '200':
+          description: Успешное изменение объекта
+          headers:
+            Location:
+              description: URL для получения объекта
+              style: simple
+              schema:
+                type: string
+                format: uri
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateResponse'
+                additionalProperties: false
+                description: Успешное изменение объекта
+                example:
+                  id: ANYSPC
+                required:
+                  - id
+              examples:
+                success:
+                  description: Успешное изменение объекта с кодом ANYSPC
+                  value:
+                    id: ANYSPC
+        '201':
+          description: Успешное изменение объекта
+          headers:
+            Location:
+              description: URL для получения объекта
+              style: simple
+              schema:
+                type: string
+                format: uri
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateResponse'
+                additionalProperties: false
+                description: Успешное изменение объекта
+                example:
+                  id: ANYSPC
+                required:
+                  - id
+              examples:
+                success:
+                  description: Успешное изменение объекта с кодом ANYSPC
+                  value:
+                    id: ANYSPC
+        '204':
+          description: Успешное удаление объекта
+          headers:
+            Location:
+              description: URL для получения объекта
+              style: simple
+              schema:
+                type: string
+                format: uri
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateResponse'
+                additionalProperties: false
+                description: Успешное удаление объекта
+                example:
+                  id: ANYSPC
+                required:
+                  - id
+              examples:
+                success:
+                  description: Успешное удаление объекта с кодом ANYSPC
+                  value:
+                    id: ANYSPC
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/ErrorDTO'
+                additionalProperties: false
+                description: Ответ в случае ошибки
+                required:
+                  - exceptionUUID
+                  - uiErrorMessage
+                example: null
+              examples:
+                forbidden:
+                  description: Ошибка запроса
+                  value:
+                    exceptionUUID: 18pE95Ic93
+                    uiErrorMessage: '-'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/ErrorDTO'
+                additionalProperties: false
+                description: Ответ в случае ошибки
+                required:
+                  - exceptionUUID
+                  - uiErrorMessage
+                example: null
+              examples:
+                forbidden:
+                  description: Ошибка доступа
+                  value:
+                    exceptionUUID: 18pE95Ic93
+                    uiErrorMessage: Доступ запрещен. Проверьте наличие необходимых прав
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/ErrorDTO'
+                additionalProperties: false
+                description: Ответ в случае ошибки
+                required:
+                  - exceptionUUID
+                  - uiErrorMessage
+                example: null
+              examples:
+                not_found:
+                  description: Элемент не найден
+                  value:
+                    exceptionUUID: 18pE95Ic93
+                    uiErrorMessage: 'Элемент ''AnyObj'' с идентификатором ''ANY'' не найден '
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/ErrorDTO'
+                additionalProperties: false
+                description: Ответ в случае ошибки
+                required:
+                  - exceptionUUID
+                  - uiErrorMessage
+                example: null
+              examples:
+                server_error:
+                  description: Неизвестная серверная ошибка
+                  value:
+                    exceptionUUID: 18pE95Ic93
+                    uiErrorMessage: Неизвестная ошибка
+components:
+  schemas:
+    UpdateResponse:
+      type: object
+      additionalProperties: false
+      description: Структура ответа в случае успеха
+      properties:
+        id:
+          type: string
+          description: Идентификатор объекта
+          example: SWTRTST
+          maxLength: 100
+          pattern: ^.{0,100}$
+      required:
+        - id
+      example: null
+    Id:
+      type: object
+      additionalProperties: false
+      description: Идентификатор юнита
+      properties:
+        code:
+          type: string
+          description: Код юнита
+          example: Пример
+          maxLength: 2147483647
+          pattern: .*
+      example: null
+    ErrorDTO:
+      type: object
+      additionalProperties: false
+      description: Ответ в случае ошибки
+      properties:
+        exceptionUUID:
+          type: string
+          description: Exception uuid
+          example: sCC2UHNchV
+          maxLength: 36
+          pattern: ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$
+        errorDtoObject:
+          type: object
+          format: Object
+          additionalProperties: false
+          description: Exception uuid
+          example: null
+        errorType:
+          type: string
+          description: Error type
+          example: Error type
+          maxLength: 1000
+          pattern: ^.*$
+        stackTrace:
+          type: string
+          description: Stack Trace
+          example: 'ru.sbt.swtr.track.core.exception.AppRuntimeException: Access denied to url'
+          maxLength: 1000
+          pattern: ^.*$
+        uiErrorMessage:
+          type: string
+          description: Error message
+          example: any application error
+          maxLength: 1000
+          pattern: ^.*$
+      required:
+        - exceptionUUID
+        - uiErrorMessage
+      example: null
+    PageDtoRq:
+      type: object
+      additionalProperties: false
+      description: Параметры пагинации
+      properties:
+        size:
+          type: integer
+          format: int32
+          description: Размер страницы
+          example: 10
+          maximum: 2147483647
+          minimum: 1
+        page:
+          type: integer
+          format: int32
+          description: Номер страницы
+          example: 1
+          maximum: 2147483647
+          minimum: 0
+      example: null
+    UserDetailDto:
+      type: object
+      additionalProperties: false
+      description: Дополнительная информация о пользователе
+      properties:
+        type:
+          $ref: '#/components/schemas/UserDetailTypeDto'
+          additionalProperties: false
+          description: Тип дополнительной информации
+          required:
+            - code
+            - name
+            - properties
+            - visible
+          example: null
+        value:
+          type: string
+          description: Значение дополнительной информации
+          example: value
+          maxLength: 2147483647
+          pattern: .*
+      required:
+        - type
+        - value
+      example: null
+    UserDetailTypeDto:
+      type: object
+      additionalProperties: false
+      description: Тип дополнительной информации о пользователе
+      properties:
+        code:
+          type: string
+          description: Код типа
+          example: email
+          maxLength: 100
+          minLength: 0
+          pattern: ^.{0,100}$
+        visible:
+          type: boolean
+          description: Признак отображения
+          example: false
+        name:
+          type: string
+          description: Наименование типа
+          example: Почта
+          maxLength: 100
+          minLength: 0
+          pattern: ^.{0,100}$
+        properties:
+          type: object
+          additionalProperties: false
+          description: Свойства типа
+          example: '["key": "value"]'
+          required:
+            - key
+            - value
+      required:
+        - code
+        - name
+        - properties
+        - visible
+      example: null
+    SuitInUnitInfo:
+      type: object
+      additionalProperties: false
+      description: Тип задачи
+      properties:
+        code:
+          type: string
+          description: Код типа задачи
+          example: task
+          maxLength: 100
+          pattern: ^.{0,100}$
+        name:
+          type: string
+          description: Название типа задачи
+          example: Задача
+          maxLength: 1024
+          pattern: ^.{0,1024}$
+        icon:
+          type: string
+          description: Иконка типа задачи
+          example: task
+          maxLength: 2147483647
+          pattern: .*
+      required:
+        - code
+        - name
+      example: null
+    UserInfoWithDetails:
+      type: object
+      additionalProperties: false
+      description: Автор шаблона
+      properties:
+        firstName:
+          type: string
+          description: Имя пользователя
+          example: Иван
+          maxLength: 2147483647
+          pattern: .*
+        lastName:
+          type: string
+          description: Фамилия пользователя
+          example: Иванов
+          maxLength: 2147483647
+          pattern: .*
+        externalId:
+          type: string
+          description: Внешний ИД пользователя
+          example: 100002
+          maxLength: 2147483647
+          pattern: .*
+        middleName:
+          type: string
+          description: Отчество пользователя
+          example: Иванович
+          maxLength: 2147483647
+          pattern: .*
+        login:
+          type: string
+          description: Логин
+          example: testov.i.i
+          maxLength: 2147483647
+          pattern: .*
+        userDetails:
+          type: array
+          description: Информация о пользователях
+          items:
+            $ref: '#/components/schemas/UserDetailDto'
+            additionalProperties: false
+            description: Дополнительная информация о пользователе
+            maxItems: 2147483647
+            required:
+              - type
+              - vale
+          maxItems: 2147483647
+          minItems: 0
+          example: null
+      required:
+        - externalId
+        - firstName
+        - lastName
+        - login
+        - middleName
+      example: null
+    QLPropertyFilterDto:
+      type: object
+      additionalProperties: false
+      description: Фильтр по свойствам
+      properties:
+        negate:
+          type: boolean
+          description: Инвертировать значение
+          example: false
+        property:
+          type: string
+          description: Свойство
+          example: code
+          maxLength: 100
+          pattern: .*
+        value:
+          type: object
+          additionalProperties: false
+          description: Значение
+          example: 123
+        operator:
+          type: string
+          description: Оператор
+          enum:
+            - eq
+            - like
+            - in
+            - ge
+            - le
+          example: eq
+      required:
+        - operator
+        - property
+        - value
+      example: null
+    QLAttributeFilterDto:
+      type: object
+      additionalProperties: false
+      description: Фильтир по атрибутам
+      properties:
+        negate:
+          type: boolean
+          description: Инвертировать значение
+          example: false
+        attribute:
+          type: string
+          description: Атрибут
+          example: code
+          maxLength: 100
+          pattern: .*
+        value:
+          type: object
+          additionalProperties: false
+          description: Значение
+          example: 123
+        operator:
+          type: string
+          description: Оператор
+          enum:
+            - eq
+            - like
+            - in
+            - ge
+            - le
+          example: eq
+      required:
+        - attribute
+        - operator
+      example: null
+    QLAttributeFiltersDto:
+      type: object
+      additionalProperties: false
+      description: Фильтры по атрибутам
+      properties:
+        or:
+          type: array
+          description: Список фильтров 'или'
+          example:
+            property: code
+            operator: eq
+            value: '123'
+          items:
+            $ref: '#/components/schemas/QLAttributeFilterDto'
+          maxItems: 50
+          minItems: 0
+        and:
+          type: array
+          description: Список фильтров 'и'
+          example:
+            property: status
+            operator: in
+            value:
+              - ACTIVE
+              - PENDING
+          items:
+            $ref: '#/components/schemas/QLAttributeFilterDto'
+          maxItems: 50
+          minItems: 0
+      example: null
+    QLPropertyFilters:
+      type: object
+      additionalProperties: false
+      description: Фильтры по свойствам
+      properties:
+        or:
+          type: array
+          description: Список фильтров 'или'
+          example:
+            property: code
+            operator: eq
+            value: '123'
+          items:
+            $ref: '#/components/schemas/QLPropertyFilterDto'
+          maxItems: 50
+          minItems: 0
+        and:
+          type: array
+          description: Список фильтров 'и'
+          example:
+            property: status
+            operator: in
+            value:
+              - ACTIVE
+              - PENDING
+          items:
+            $ref: '#/components/schemas/QLPropertyFilterDto'
+          maxItems: 50
+          minItems: 0
+      example: null
+    QLRequestDto:
+      type: object
+      additionalProperties: false
+      description: Запрос поиска юнитов
+      properties:
+        calculatedAttributes:
+          type: array
+          description: Cписок получаемых вычисляемых атрибутов
+          example:
+            - votes
+          items:
+            type: string
+            example: Пример
+            maxLength: 2147483647
+            pattern: .*
+          maxItems: 100
+          minItems: 0
+        attributes:
+          type: array
+          description: Список получаемых атрибутов
+          example:
+            - code
+            - updatedAt
+          items:
+            type: string
+            example: Пример
+            maxLength: 2147483647
+            pattern: .*
+          maxItems: 100
+          minItems: 0
+        filters:
+          $ref: '#/components/schemas/QLUnitFilterDto'
+          description: Фильтры запроса
+          example: null
+        page:
+          $ref: '#/components/schemas/PageDtoRq'
+          description: Параметры страницы
+          example: null
+        sort:
+          $ref: '#/components/schemas/UnitSortDto'
+          description: Направление и список полей сортировки
+          example: null
+      example: null
+    QLUnitFilterDto:
+      type: object
+      additionalProperties: false
+      description: Фильтр по задачам
+      example:
+        spaces:
+          - SWTR1
+          - SWTR2
+      properties:
+        deleted:
+          type: boolean
+          description: Фильтр по удаленным записям
+          example: true
+        spaces:
+          type: array
+          description: Список пространств для фильтрации
+          example:
+            - SWTR1
+            - SWTR2
+          items:
+            type: string
+            example: Пример
+            maxLength: 2147483647
+            pattern: .*
+          maxItems: 100
+          minItems: 0
+        attributes:
+          $ref: '#/components/schemas/QLAttributeFiltersDto'
+          description: Фильтры по атрибутам
+          example: null
+        units:
+          type: array
+          description: Список задач для фильтрации
+          example:
+            - SWTR-123
+            - SWTR-321
+          items:
+            type: string
+            example: Пример
+            maxLength: 2147483647
+            pattern: .*
+          maxItems: 100
+          minItems: 0
+        suits:
+          type: array
+          description: Список типов задач для фильтрации
+          example:
+            - SWTR-123
+            - SWTR-321
+          items:
+            type: string
+            example: Пример
+            maxLength: 2147483647
+            pattern: .*
+          maxItems: 100
+          minItems: 0
+        properties:
+          $ref: '#/components/schemas/QLPropertyFilters'
+          description: Фильтры по свойствам
+          example: null
+    UnitSortDto:
+      type: object
+      additionalProperties: false
+      description: Сортировка
+      properties:
+        attribute:
+          type: array
+          description: Список полей для сортировки
+          example:
+            - name
+            - createdAt
+          items:
+            type: string
+            example: Пример
+            maxLength: 2147483647
+            pattern: .*
+          maxItems: 5
+          minItems: 0
+        direction:
+          type: string
+          description: Направление сортировки
+          enum:
+            - ASC
+            - DESC
+            - ASC
+            - DESC
+          example: ASC
+          examples:
+            - ASC
+            - DESC
+      example: null
+    PageDtoRsQLResponseDto:
+      type: object
+      additionalProperties: false
+      description: Информация о странице
+      properties:
+        pageNumber:
+          type: integer
+          format: int32
+          description: Номер страницы
+          example: 1
+          maximum: 2147483647
+          minimum: 0
+        pageSize:
+          type: integer
+          format: int32
+          description: Размер страницы
+          example: 10
+          maximum: 2147483647
+          minimum: 1
+        hasNext:
+          type: boolean
+          description: Наличие следующей страницы
+          example: true
+        content:
+          type: array
+          description: Список элементов на странице
+          example:
+            - object
+            - object
+          items:
+            description: Элемент на странице
+            example: null
+          maxItems: 2147483647
+          minItems: 0
+        totalElements:
+          type: integer
+          format: int32
+          description: Всего элементов
+          example: 10
+          maximum: 2147483647
+          minimum: 0
+      example: null
+    SpaceInUnitInfo:
+      type: object
+      additionalProperties: false
+      description: Информация о пространстве
+      properties:
+        code:
+          type: string
+          description: Код пространства
+          example: Пример
+          maxLength: 2147483647
+          pattern: .*
+        name:
+          type: string
+          description: Название пространства
+          example: Пример
+          maxLength: 2147483647
+          pattern: .*
+      required:
+        - code
+        - name
+      example: null
+    Validator:
+      type: object
+      additionalProperties: false
+      description: Validator
+      properties:
+        condition:
+          type: string
+          description: Состояние валидатора
+          example: Пример
+          maxLength: 2147483647
+          pattern: .*
+        name:
+          type: string
+          description: Название валидатора
+          example: Пример
+          maxLength: 2147483647
+          pattern: .*
+        description:
+          type: string
+          description: Описание валидатора
+          example: Пример
+          maxLength: 2147483647
+          pattern: .*
+        type:
+          type: string
+          description: Тип валидатора
+          example: Пример
+          maxLength: 2147483647
+          pattern: .*
+      example: null
+    GetRootFolderRq:
+      type: object
+      additionalProperties: false
+      description: Запрос на получения структуры папок от корня
+      properties:
+        spaceId:
+          type: object
+          additionalProperties: false
+          description: spaceId
+          example: null
+        type:
+          type: object
+          additionalProperties: false
+          description: type
+          example: null
+      example: null
+    FolderDto:
+      type: object
+      additionalProperties: false
+      description: Информация о папке
+      properties:
+        children:
+          type: array
+          description: children
+          items:
+            description: Список дочерних папок
+            example: null
+          maxItems: 2147483647
+          minItems: 0
+          example: null
+        id:
+          $ref: '#/components/schemas/Id'
+          description: Идентификатор юнита
+          example: null
+        title:
+          type: string
+          description: Название папки
+          example: Пример
+          maxLength: 2147483647
+          pattern: .*
+        key:
+          type: string
+          description: Код папки
+          example: Пример
+          maxLength: 2147483647
+          pattern: .*
+      example: null
+    GetRootUnitFolderRq:
+      type: object
+      additionalProperties: false
+      description: Запрос на получения структуры папок от корня с юнитами
+      properties:
+        unitFilters:
+          $ref: '#/components/schemas/QLRequestDto'
+          description: Фильтры по свойствам юнитов
+          example: null
+        getRootFolderRq:
+          $ref: '#/components/schemas/GetRootFolderRq'
+          description: Структура папок от корня
+          example: null
+        linkedTo:
+          $ref: '#/components/schemas/Id'
+          description: Идентификатор юнита
+          example: null
+      example: null
+    FolderUnitsDto:
+      type: object
+      additionalProperties: false
+      description: Информация о папке и юнитах в ней
+      properties:
+        folderHierarchy:
+          $ref: '#/components/schemas/FolderDto'
+          description: Структура папок
+          example: null
+        units:
+          $ref: '#/components/schemas/PageDtoRsQLResponseDto'
+          description: Список юнитов в папке
+          example: null
+      example: null
+    FolderUnitsRq:
+      type: object
+      additionalProperties: false
+      description: Запрос на получение структуры папок и отфильтрованных юнитов
+      properties:
+        unitFilters:
+          $ref: '#/components/schemas/QLRequestDto'
+          description: Фильтры по свойствам юнитов
+          example: null
+        linkedTo:
+          $ref: '#/components/schemas/Id'
+          description: Идентификатор юнита, по которому будет осуществляться фильтрация
+          example: null
+        type:
+          type: string
+          description: Тип корневой папки
+          enum:
+            - TEST_CASE
+            - TEST_CYCLE
+            - TEST_CASE_RUN
+            - ARCHIVE
+          example: Пример
+      example: null
+    CreateFolderRq:
+      type: object
+      additionalProperties: false
+      description: Запрос на создание папки
+      properties:
+        name:
+          type: string
+          description: Название папки
+          example: Пример
+          maxLength: 2147483647
+          pattern: .*
+        parentId:
+          $ref: '#/components/schemas/Id'
+          description: Идентификатор родительской папки
+          example: null
+      example: null
+    ValidatorErrorByAttributeDto:
+      type: object
+      additionalProperties: false
+      description: Ошибка валидации по атрибуту
+      properties:
+        attributeName:
+          type: string
+          description: Название атрибута
+          example: Пример
+          maxLength: 2147483647
+          pattern: .*
+        errorMsg:
+          type: string
+          description: Сообщение об ошибке
+          example: Пример
+          maxLength: 2147483647
+          pattern: .*
+      example: null
+    UnitAttributeCodeValueInfo:
+      type: object
+      additionalProperties: false
+      description: Информация о значении кода атрибута юнита
+      properties:
+        code:
+          type: string
+          description: Код
+          example: Пример
+          maxLength: 2147483647
+          pattern: .*
+        valueAsString:
+          type: string
+          description: Значение в виде строки
+          example: Пример
+          maxLength: 2147483647
+          pattern: .*
+        name:
+          type: string
+          description: Название
+          example: Пример
+          maxLength: 2147483647
+          pattern: .*
+        type:
+          type: string
+          description: Тип
+          example: Пример
+          maxLength: 2147483647
+          pattern: .*
+        value:
+          type: object
+          additionalProperties: false
+          description: Объект значения
+          example: null
+        parameters:
+          type: object
+          additionalProperties:
+            type: object
+            description: Параметры атрибута юнита
+          description: Параметры атрибута юнита
+          properties:
+            empty:
+              type: boolean
+              example: true
+          example: null
+      example: null
+    UnitWithAttributes:
+      type: object
+      additionalProperties: false
+      description: UnitWithAttributes
+      properties:
+        summary:
+          type: string
+          description: summary
+          example: Пример
+          maxLength: 2147483647
+          pattern: .*
+        createdAt:
+          type: string
+          format: date-time
+          description: createdAt
+          example: Пример
+          maxLength: 2147483647
+          pattern: .*
+        code:
+          type: string
+          description: code
+          example: Пример
+          maxLength: 2147483647
+          pattern: .*
+        updatedBy:
+          $ref: '#/components/schemas/UserInfoWithDetails'
+          description: updatedBy
+          example: null
+        validatorErrorMsgs:
+          type: array
+          description: validatorErrorMsgs
+          items:
+            $ref: '#/components/schemas/ValidatorErrorDto'
+          maxItems: 2147483647
+          minItems: 0
+          example: null
+        createdBy:
+          $ref: '#/components/schemas/UserInfoWithDetails'
+          description: createdBy
+          example: null
+        description:
+          type: string
+          description: description
+          example: Пример
+          maxLength: 2147483647
+          pattern: .*
+        attributes:
+          type: array
+          description: attributes
+          items:
+            $ref: '#/components/schemas/UnitAttributeCodeValueInfo'
+          maxItems: 2147483647
+          minItems: 0
+          example: null
+        suit:
+          $ref: '#/components/schemas/SuitInUnitInfo'
+          description: suit
+          example: null
+        space:
+          $ref: '#/components/schemas/SpaceInUnitInfo'
+          description: space
+          example: null
+        isFavorite:
+          type: boolean
+          description: isFavorite
+          example: true
+        updatedAt:
+          type: string
+          format: date-time
+          description: updatedAt
+          example: Пример
+          maxLength: 2147483647
+          pattern: .*
+      required:
+        - code
+        - space
+      example: null
+    ValidatorErrorDto:
+      type: object
+      additionalProperties: false
+      description: Сущности для дополнительной информации фронту, для отображения полноценно ошибок
+      properties:
+        result:
+          type: boolean
+          description: Результат
+          example: true
+        validator:
+          $ref: '#/components/schemas/Validator'
+          description: Валидатор
+          example: null
+        errorsByAttribute:
+          type: array
+          description: Список ошибок валидации по атрибутам
+          items:
+            $ref: '#/components/schemas/ValidatorErrorByAttributeDto'
+            additionalProperties: false
+            description: Ошибка валидации по атрибуту
+          maxItems: 2147483647
+          minItems: 0
+          example: null
+      example: null

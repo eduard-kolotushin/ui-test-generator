@@ -13,12 +13,12 @@ def get_gigachat_credentials() -> str:
     """
     Return the credentials/token for GigaChat.
 
-    Expected to be provided via the `GIGACHAT_CREDENTIALS` environment variable.
+    Expected to be provided via the `GIGACHAT_API_KEY` environment variable.
     """
-    value = os.getenv("GIGACHAT_CREDENTIALS")
+    value = os.getenv("GIGACHAT_API_KEY")
     if not value:
         raise RuntimeError(
-            "GIGACHAT_CREDENTIALS is not set. Please export your GigaChat token."
+            "GIGACHAT_API_KEY is not set. Please export your GigaChat token."
         )
     return value
 

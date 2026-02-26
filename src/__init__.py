@@ -1,1 +1,9 @@
-# UI Test Generator - AI agent for Grafana UI test case generation via TaskTracker
+"""
+Top-level package for the UI Test Generator agent.
+
+The `src` package contains:
+- `agent`: Deep Agents setup and prompts.
+- `tasktracker`: TaskTracker API client and tools.
+- `config`: configuration helpers for GigaChat and TaskTracker.
+"""
+

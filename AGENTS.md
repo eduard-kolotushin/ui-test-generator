@@ -31,9 +31,12 @@ So: **source folder = template; target folder = where the generated tests live.*
 
 ## Tech stack (fixed for this project)
 
-- **Language**: Python.
-- **Orchestration**: **LangGraph** (ReAct-style agent with a tool-calling loop).
-- **Tools / models**: LangChain tools and chat models (e.g. OpenAI, Anthropic).
+- **Language**: Python (managed with **uv**).
+- **Orchestration**: **Deep Agents** (built on LangChain + LangGraph).
+- **LLM**: **GigaChat** via `langchain-gigachat`.
+- **Tools / skills**: Deep Agents skills that wrap:
+  - the **TaskTracker API** defined in `api-docs.yaml` (for folders, test cases, updates, deletes),
+  - any supporting utilities needed for reasoning over JSON test case structures.
 - **External system**: **TaskTracker** – our platform for managing tasks and test runs; it exposes an API to manage test cases.
 
 ---
@@ -55,14 +58,15 @@ The actual HTTP endpoints and payload shapes are implemented in `src/tasktracker
 
 ## Agent design
 
-- **Type**: Single AI agent that has access to **tools** and runs in a **loop** (reason → optional tool calls → reason again) until it can answer or finish the task.
-- **Tools** (see `src/tasktracker/tools.py`):
-  - `get_test_cases(folder)` – list test cases in a folder.
-  - `create_test_case(folder, test_case_json)` – create one test case in a folder.
+- **Type**: Single deep agent created via `deepagents.create_deep_agent` that runs in a **loop** (reason → optional tool calls → reason again) until it can answer or finish the task.
+- **LLM skill**: A Deep Agents-compatible chat model built on `GigaChat` (`langchain-gigachat`), configured via environment variables and `src/config.py`.
+- **TaskTracker skills / tools** (implemented in `src/tasktracker/tools.py`, backed by `src/tasktracker/client.py` and `api-docs.yaml`):
+  - `get_test_cases(folder)` – list test cases in a folder (using the TaskTracker TMS plugin endpoints).
+  - `create_test_case(folder, test_case_json)` – create one test case in a folder (using the unit creation endpoints and appropriate folder linkage).
   - `update_test_case(test_case_id, test_case_json)` – update an existing test case.
   - `delete_test_case(test_case_id)` – delete a test case.
 - **System prompt** (see `src/agent/prompts.py`): Instructs the agent to (1) identify source and target folders, (2) fetch source tests, (3) generate adapted test case JSON, (4) create them in the target folder. It should keep JSON structure consistent with the source unless the user asks otherwise.
-- **Entrypoint**: CLI in `src/main.py`; one-shot or interactive; optional model selection and JSON debug output.
+- **Entrypoint**: CLI in `src/main.py`; one-shot or interactive; the CLI sends user instructions to the deep agent and prints the agent’s final answer (and, optionally, debug JSON).
 
 ---
 

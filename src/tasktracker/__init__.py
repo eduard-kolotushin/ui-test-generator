@@ -1,20 +1,8 @@
-"""TaskTracker API client and tools for test case management."""
-from src.tasktracker.client import TaskTrackerClient, get_client, set_client
-from src.tasktracker.stub import TaskTrackerStubClient
-from src.tasktracker.tools import (
-    create_test_case,
-    delete_test_case,
-    get_test_cases,
-    update_test_case,
-)
+"""
+TaskTracker client and Deep Agents tools.
 
-__all__ = [
-    "TaskTrackerClient",
-    "TaskTrackerStubClient",
-    "get_client",
-    "set_client",
-    "get_test_cases",
-    "create_test_case",
-    "update_test_case",
-    "delete_test_case",
-]
+This package exposes:
+- a thin HTTP client for the TaskTracker API (`client.py`);
+- Deep Agents / LangChain tools wrapping common operations (`tools.py`).
+"""
+

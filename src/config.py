@@ -1,32 +1,60 @@
-"""Configuration loaded from environment."""
 import os
-from pathlib import Path
-
-from dotenv import load_dotenv
-
-# Load .env from project root
-_env_path = Path(__file__).resolve().parent.parent / ".env"
-load_dotenv(_env_path)
+from typing import Optional
 
 
-def get_tasktracker_base_url() -> str:
-    return os.getenv("TASKTRACKER_BASE_URL", "http://localhost:8000/api")
+def _get_bool_env(name: str, default: bool = False) -> bool:
+    value = os.getenv(name)
+    if value is None:
+        return default
+    return value.strip().lower() in {"1", "true", "yes", "y"}
 
 
-def get_tasktracker_api_key() -> str | None:
-    return os.getenv("TASKTRACKER_API_KEY")
+def get_gigachat_credentials() -> str:
+    """
+    Return the credentials/token for GigaChat.
 
-
-def get_tasktracker_use_stub() -> bool:
-    """Use in-memory stub instead of real TaskTracker API (e.g. TASKTRACKER_USE_STUB=true)."""
-    return os.getenv("TASKTRACKER_USE_STUB", "").lower() in ("1", "true", "yes")
-
-
-def get_gigachat_credentials() -> str | None:
-    """GigaChat API key / auth token from env (GIGACHAT_API_KEY or GIGACHAT_CREDENTIALS)."""
-    return os.getenv("GIGACHAT_API_KEY") or os.getenv("GIGACHAT_CREDENTIALS")
+    Expected to be provided via the `GIGACHAT_CREDENTIALS` environment variable.
+    """
+    value = os.getenv("GIGACHAT_CREDENTIALS")
+    if not value:
+        raise RuntimeError(
+            "GIGACHAT_CREDENTIALS is not set. Please export your GigaChat token."
+        )
+    return value
 
 
 def get_gigachat_verify_ssl() -> bool:
-    """Whether to verify SSL for GigaChat (default False for compatibility)."""
-    return os.getenv("GIGACHAT_VERIFY_SSL", "false").lower() in ("1", "true", "yes")
+    """
+    Control SSL certificate verification for GigaChat.
+
+    Uses the `GIGACHAT_VERIFY_SSL` env var (true/false). Defaults to False to
+    match common internal deployments, but you should set it to true in production
+    if certificates are valid.
+    """
+    return _get_bool_env("GIGACHAT_VERIFY_SSL", default=False)
+
+
+def get_tasktracker_base_url() -> str:
+    """
+    Base URL for the TaskTracker API, e.g. `https://portal.works.prod.sbt/swtr`.
+
+    Configured via `TASKTRACKER_BASE_URL`.
+    """
+    value = os.getenv("TASKTRACKER_BASE_URL")
+    if not value:
+        raise RuntimeError(
+            "TASKTRACKER_BASE_URL is not set. "
+            "Example: https://portal.works.prod.sbt/swtr"
+        )
+    return value.rstrip("/")
+
+
+def get_tasktracker_token() -> Optional[str]:
+    """
+    Optional bearer token for authenticating with TaskTracker.
+
+    If your deployment uses another auth mechanism (cookies, mTLS, etc.),
+    adapt the client in `src/tasktracker/client.py` accordingly.
+    """
+    return os.getenv("TASKTRACKER_TOKEN")
+

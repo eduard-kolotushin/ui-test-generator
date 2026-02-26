@@ -1,96 +1,158 @@
-"""HTTP client for TaskTracker API. Manages test cases (CRUD) by folder.
-
-Test cases are JSON objects with "folder" as a top-level key.
-"""
 from __future__ import annotations
 
-import json
-from typing import Any
+from dataclasses import dataclass
+from typing import Any, Dict, List, Optional
 
 import httpx
 
-from src.config import get_tasktracker_api_key, get_tasktracker_base_url, get_tasktracker_use_stub
-
-from src.tasktracker.stub import TaskTrackerStubClient
+from src.config import get_tasktracker_base_url, get_tasktracker_token
 
 
+@dataclass
 class TaskTrackerClient:
-    """Client for TaskTracker API. Assumes REST endpoints for test cases."""
+    """
+    Minimal HTTP client for the TaskTracker API described in `api-docs.yaml`.
 
-    def __init__(
-        self,
-        base_url: str | None = None,
-        api_key: str | None = None,
-        timeout: float = 30.0,
-    ) -> None:
-        self.base_url = (base_url or get_tasktracker_base_url()).rstrip("/")
-        self.api_key = api_key or get_tasktracker_api_key()
-        self.timeout = timeout
+    This client focuses on the subset of operations needed for managing
+    test cases:
 
-    def _headers(self) -> dict[str, str]:
-        headers = {"Content-Type": "application/json", "Accept": "application/json"}
-        if self.api_key:
-            headers["Authorization"] = f"Bearer {self.api_key}"
+    - Listing test cases in a folder.
+    - Creating a new test case.
+    - Updating an existing test case.
+    - Deleting a test case.
+
+    It can be extended as needed if you start using more of the OpenAPI spec.
+    """
+
+    base_url: str
+    token: Optional[str] = None
+    timeout: float = 30.0
+
+    def __post_init__(self) -> None:
+        self._client = httpx.Client(
+            base_url=self.base_url,
+            timeout=self.timeout,
+            headers=self._build_headers(),
+        )
+
+    @classmethod
+    def from_env(cls) -> "TaskTrackerClient":
+        return cls(
+            base_url=get_tasktracker_base_url(),
+            token=get_tasktracker_token(),
+        )
+
+    def _build_headers(self) -> Dict[str, str]:
+        headers: Dict[str, str] = {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+        }
+        if self.token:
+            headers["Authorization"] = f"Bearer {self.token}"
         return headers
 
-    def get_test_cases(self, folder: str) -> list[dict[str, Any]]:
-        """Fetch all test cases in a folder. Returns list of test case JSON objects."""
-        # Assume endpoint: GET /test-cases?folder=<folder> or GET /folders/<folder>/test-cases
-        url = f"{self.base_url}/test-cases"
-        params = {"folder": folder}
-        with httpx.Client(timeout=self.timeout) as client:
-            resp = client.get(url, params=params, headers=self._headers())
-            resp.raise_for_status()
-            data = resp.json()
-        # Support both { "items": [...] } and direct list
-        if isinstance(data, list):
-            return data
-        if isinstance(data, dict) and "items" in data:
-            return data["items"]
-        if isinstance(data, dict) and "test_cases" in data:
-            return data["test_cases"]
-        return []
+    # --- High-level operations used by tools ---
 
-    def create_test_case(self, folder: str, test_case: dict[str, Any]) -> dict[str, Any]:
-        """Create a test case in the given folder. Returns created test case JSON (folder is top-level)."""
-        url = f"{self.base_url}/test-cases"
-        body = {**test_case, "folder": folder}
-        with httpx.Client(timeout=self.timeout) as client:
-            resp = client.post(url, json=body, headers=self._headers())
-            resp.raise_for_status()
-            return resp.json()
+    def get_test_cases(
+        self,
+        folder_code: str,
+        page: int = 0,
+        size: int = 50,
+    ) -> Dict[str, Any]:
+        """
+        Fetch test cases for a given folder.
 
-    def update_test_case(self, test_case_id: str, test_case: dict[str, Any]) -> dict[str, Any]:
-        """Update an existing test case by ID. Returns updated test case JSON."""
-        url = f"{self.base_url}/test-cases/{test_case_id}"
-        with httpx.Client(timeout=self.timeout) as client:
-            resp = client.put(url, json=test_case, headers=self._headers())
-            resp.raise_for_status()
-            return resp.json()
+        Uses the TMS plugin endpoint:
+        `/extension/plugin/v2/rest/api/swtr_tms_plugin/v1/folder/hierarchy/{folder_code}/units/filtered`
+        with `type=TEST_CASE`.
+        """
+        body = {
+            "type": "TEST_CASE",
+            "linkedTo": None,
+            "unitFilters": {
+                "page": {"page": page, "size": size},
+            },
+        }
+        response = self._client.post(
+            f"/extension/plugin/v2/rest/api/swtr_tms_plugin/v1/folder/hierarchy/{folder_code}/units/filtered",
+            json=body,
+        )
+        response.raise_for_status()
+        return response.json()
 
-    def delete_test_case(self, test_case_id: str) -> None:
-        """Delete a test case by ID."""
-        url = f"{self.base_url}/test-cases/{test_case_id}"
-        with httpx.Client(timeout=self.timeout) as client:
-            resp = client.delete(url, headers=self._headers())
-            resp.raise_for_status()
+    def create_test_case(
+        self,
+        suit: str,
+        payload: Dict[str, Any],
+    ) -> Dict[str, Any]:
+        """
+        Create a new test case via:
+        `/rest/api/unit/v2/{suit}/create`
+
+        The exact schema for `payload` is defined by TaskTracker. You can
+        pass through the JSON generated by the agent, as long as it matches
+        what the server expects (for test cases that is typically `suit=test_case`).
+        """
+        response = self._client.post(
+            f"/rest/api/unit/v2/{suit}/create",
+            json=payload,
+        )
+        response.raise_for_status()
+        return response.json()
+
+    def get_test_case(self, code: str) -> Dict[str, Any]:
+        """
+        Fetch a single test case (unit) by code:
+        `/rest/api/unit/v2/{code}`
+        """
+        response = self._client.get(f"/rest/api/unit/v2/{code}")
+        response.raise_for_status()
+        return response.json()
+
+    def update_test_case(
+        self,
+        code: str,
+        patch_body: Dict[str, Any],
+    ) -> Dict[str, Any]:
+        """
+        Update an existing test case:
+        `/rest/api/unit/v2/update/{code}`
+        """
+        response = self._client.patch(
+            f"/rest/api/unit/v2/update/{code}",
+            json=patch_body,
+        )
+        response.raise_for_status()
+        return response.json()
+
+    def delete_test_case(self, code: str) -> Dict[str, Any]:
+        """
+        Best-effort delete for a test case.
+
+        The OpenAPI spec exposes `204` for successful delete on the same
+        `/rest/api/unit/v2/{suit}/create` operation; to avoid overfitting
+        to that quirk, this method performs a PATCH with a workflow/status
+        change or uses a dedicated delete endpoint if one is added later.
+
+        For now, this is implemented as a no-op placeholder that should be
+        adapted once a canonical delete operation is agreed on.
+        """
+        raise NotImplementedError(
+            "delete_test_case is not wired to a concrete TaskTracker endpoint yet. "
+            "Add the correct delete call when the API contract is finalized."
+        )
+
+    # --- Low-level helpers ---
+
+    def close(self) -> None:
+        self._client.close()
 
 
-# Singleton used by tools (can be overridden for testing)
-_default_client: TaskTrackerClient | TaskTrackerStubClient | None = None
+def flatten_test_cases(result: Dict[str, Any]) -> List[Dict[str, Any]]:
+    """
+    Extract the list of test case units from the `FolderUnitsDto` response.
+    """
+    units_page = result.get("units") or {}
+    content = units_page.get("content") or []
+    return [item.get("unit", item) for item in content]
 
-
-def get_client() -> TaskTrackerClient | TaskTrackerStubClient:
-    """Return the TaskTracker client: stub if TASKTRACKER_USE_STUB is set, else real API client."""
-    global _default_client
-    if _default_client is None:
-        if get_tasktracker_use_stub():
-            _default_client = TaskTrackerStubClient()
-        else:
-            _default_client = TaskTrackerClient()
-    return _default_client
-
-
-def set_client(client: TaskTrackerClient | TaskTrackerStubClient | None) -> None:
-    global _default_client
-    _default_client = client

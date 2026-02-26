@@ -1,4 +1,4 @@
-"""LangGraph agent for UI test case generation."""
-from src.agent.graph import create_agent, run_agent
+"""
+Deep Agents configuration and system prompts for the UI Test Generator.
+"""
 
-__all__ = ["create_agent", "run_agent"]

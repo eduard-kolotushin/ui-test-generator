@@ -51,6 +51,61 @@ class TaskTrackerClient:
             headers["Authorization"] = f"Bearer {self.token}"
         return headers
 
+    # --- Folder operations (TMS plugin) ---
+
+    def get_root_folder_units(
+        self,
+        *,
+        space_id_code: str = "TMS",
+        page: int = 0,
+        size: int = 50,
+    ) -> Dict[str, Any]:
+        """
+        Get folder hierarchy from root and paginated units.
+
+        POST /extension/plugin/v2/rest/api/swtr_tms_plugin/v1/folder/root/units
+        Request: getRootFolderRq (type TEST_CASE, spaceId), unitFilters (page).
+        """
+        body = {
+            "getRootFolderRq": {
+                "type": "TEST_CASE",
+                "spaceId": {"code": space_id_code},
+            },
+            "linkedTo": None,
+            "unitFilters": {"page": {"page": page, "size": size}},
+        }
+        response = self._client.post(
+            "/extension/plugin/v2/rest/api/swtr_tms_plugin/v1/folder/root/units",
+            json=body,
+        )
+        response.raise_for_status()
+        return response.json()
+
+    def create_folder(
+        self,
+        name: str,
+        parent_id_code: str,
+        space_id_code: str = "TMS",
+    ) -> Dict[str, Any]:
+        """
+        Create a folder under the given parent.
+
+        POST /extension/plugin/v2/rest/api/swtr_tms_plugin/v1/folder/create
+        Request: name, parentId { code }, spaceId { code }.
+        Response: FolderDto (id, key, title, children).
+        """
+        body = {
+            "name": name,
+            "parentId": {"code": parent_id_code},
+            "spaceId": {"code": space_id_code},
+        }
+        response = self._client.post(
+            "/extension/plugin/v2/rest/api/swtr_tms_plugin/v1/folder/create",
+            json=body,
+        )
+        response.raise_for_status()
+        return response.json()
+
     # --- High-level operations used by tools ---
 
     def get_test_cases(

@@ -29,6 +29,18 @@ Use this skill whenever the user asks you to:
 
 You have access to the following TaskTracker-specific tools:
 
+**Folders (TMS plugin)**
+
+- `get_root_folder_units(space_id_code, page, size)`  
+  Get the root folder hierarchy and paginated units. Use this to discover
+  folder structure and root-level test cases (e.g. space_id_code `TMS`).
+
+- `create_folder(name, parent_id_code, space_id_code)`  
+  Create a new folder under the given parent. Parent is often `TMS_test_case`
+  for the root test-case tree, or a child folder code from the hierarchy.
+
+**Test cases**
+
 - `get_test_cases(folder_code, page, size)`  
   Read existing test cases in a folder. Use this first to understand the
   current structure, fields, and conventions.

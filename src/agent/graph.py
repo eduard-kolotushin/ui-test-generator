@@ -8,7 +8,9 @@ from langchain_gigachat import GigaChat
 from src.agent.prompts import SYSTEM_PROMPT
 from src.config import get_gigachat_credentials, get_gigachat_verify_ssl
 from src.tasktracker.tools import (
+    create_folder_tool,
     create_test_case_tool,
+    get_root_folder_units_tool,
     get_single_test_case_tool,
     get_test_cases_tool,
     update_test_case_tool,
@@ -33,6 +35,8 @@ def build_agent() -> Any:
     Returns a LangGraph runnable that you can `.invoke` or `.stream`.
     """
     tools = [
+        get_root_folder_units_tool(),
+        create_folder_tool(),
         get_test_cases_tool(),
         get_single_test_case_tool(),
         create_test_case_tool(),

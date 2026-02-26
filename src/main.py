@@ -9,23 +9,46 @@ from dotenv import load_dotenv
 from src.agent.graph import build_agent, run_once
 
 
+def _message_content(msg: Any) -> Any:
+    """Extract content from a message (dict or LangChain message object)."""
+    if isinstance(msg, dict):
+        return msg.get("content")
+    return getattr(msg, "content", None)
+
+
+def _serializable_result(result: Dict[str, Any]) -> Dict[str, Any]:
+    """Convert LangGraph result to JSON-serializable dict (messages as role/content)."""
+    out: Dict[str, Any] = {}
+    for key, value in result.items():
+        if key == "messages" and isinstance(value, list):
+            out[key] = [
+                {"type": type(m).__name__, "content": _message_content(m)}
+                for m in value
+            ]
+        elif isinstance(value, (dict, list, str, int, float, bool, type(None))):
+            out[key] = value
+        else:
+            out[key] = str(value)
+    return out
+
+
 def _pretty_print_result(result: Dict[str, Any]) -> None:
     """
     Best-effort pretty-printer for the deep agent's output.
 
     Deep Agents returns a LangGraph-style state; we print the final message
-    content if we can find it, otherwise we dump the whole structure as JSON.
+    content if we can find it, otherwise we dump a JSON-serializable view.
     """
     messages = result.get("messages")
     if isinstance(messages, list) and messages:
         last = messages[-1]
-        content = last.get("content") if isinstance(last, dict) else None
+        content = _message_content(last)
         if content:
             print(content)
             return
 
-    # Fallback: print raw JSON
-    print(json.dumps(result, ensure_ascii=False, indent=2))
+    # Fallback: dump a serializable view of the state
+    print(json.dumps(_serializable_result(result), ensure_ascii=False, indent=2))
 
 
 def main() -> None:

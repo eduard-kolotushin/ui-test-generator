@@ -8,6 +8,85 @@ from pydantic import BaseModel, Field
 from src.tasktracker.client import TaskTrackerClient, flatten_test_cases
 
 
+# --- Folder tools ---
+
+
+class GetRootFolderUnitsInput(BaseModel):
+    space_id_code: str = Field(
+        "TMS",
+        description="Space ID code for the root folder (e.g. TMS).",
+    )
+    page: int = Field(0, description="Page number (0-based).", ge=0)
+    size: int = Field(50, description="Page size.", ge=1, le=500)
+
+
+def _get_root_folder_units_impl(
+    space_id_code: str = "TMS",
+    page: int = 0,
+    size: int = 50,
+) -> Dict[str, Any]:
+    client = TaskTrackerClient.from_env()
+    return client.get_root_folder_units(
+        space_id_code=space_id_code,
+        page=page,
+        size=size,
+    )
+
+
+def get_root_folder_units_tool() -> StructuredTool:
+    """List root folder hierarchy and units (test cases at root level)."""
+    return StructuredTool.from_function(
+        name="get_root_folder_units",
+        description=(
+            "Get the root folder hierarchy and paginated units (test cases) from the root. "
+            "Use this to discover folder structure and root-level test cases."
+        ),
+        func=_get_root_folder_units_impl,
+        args_schema=GetRootFolderUnitsInput,
+    )
+
+
+class CreateFolderInput(BaseModel):
+    name: str = Field(..., description="Name of the new folder.")
+    parent_id_code: str = Field(
+        ...,
+        description="Code of the parent folder (e.g. TMS_test_case for root, or a child folder code).",
+    )
+    space_id_code: str = Field(
+        "TMS",
+        description="Space ID code (e.g. TMS).",
+    )
+
+
+def _create_folder_impl(
+    name: str,
+    parent_id_code: str,
+    space_id_code: str = "TMS",
+) -> Dict[str, Any]:
+    client = TaskTrackerClient.from_env()
+    return client.create_folder(
+        name=name,
+        parent_id_code=parent_id_code,
+        space_id_code=space_id_code,
+    )
+
+
+def create_folder_tool() -> StructuredTool:
+    """Create a new folder under the given parent."""
+    return StructuredTool.from_function(
+        name="create_folder",
+        description=(
+            "Create a new TaskTracker folder under the given parent. "
+            "Use get_root_folder_units to discover parent folder codes."
+        ),
+        func=_create_folder_impl,
+        args_schema=CreateFolderInput,
+    )
+
+
+# --- Test case tools ---
+
+
 class GetTestCasesInput(BaseModel):
     folder_code: str = Field(
         ...,

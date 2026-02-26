@@ -4,6 +4,8 @@ import argparse
 import json
 from typing import Any, Dict
 
+from dotenv import load_dotenv
+
 from src.agent.graph import build_agent, run_once
 
 
@@ -46,6 +48,10 @@ def main() -> None:
         help="Run in a simple REPL loop instead of one-shot mode.",
     )
     args = parser.parse_args()
+
+    # Load environment variables from a local `.env` file if present,
+    # so config helpers can pick them up via os.getenv.
+    load_dotenv()
 
     agent = build_agent()
 

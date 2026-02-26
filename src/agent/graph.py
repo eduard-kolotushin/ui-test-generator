@@ -45,6 +45,9 @@ def build_agent() -> Any:
         model=model,
         tools=tools,
         system_prompt=SYSTEM_PROMPT,
+        # Attach the TaskTracker skill so the agent can load
+        # more detailed, task-specific instructions on demand.
+        skills=["skills/tasktracker"],
     )
     return agent
 

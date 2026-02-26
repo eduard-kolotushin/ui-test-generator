@@ -1,3 +1,4 @@
+from dotenv import load_dotenv
 from langchain_gigachat import GigaChat
 
 from src.config import get_gigachat_credentials, get_gigachat_verify_ssl
@@ -12,5 +13,6 @@ def build_test_model() -> GigaChat:
 
 
 if __name__ == "__main__":
+    load_dotenv()
     model = build_test_model()
     print(model.invoke("Hello from GigaChat test!"))

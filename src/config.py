@@ -76,6 +76,16 @@ def get_tasktracker_token() -> Optional[str]:
     return os.getenv("TASKTRACKER_TOKEN")
 
 
+def get_tasktracker_basic_auth() -> Optional[str]:
+    """
+    Optional HTTP Basic auth credentials for TaskTracker in the form `user:password`.
+
+    If set in `TASKTRACKER_BASIC_AUTH`, the client will send an `Authorization: Basic ...`
+    header instead of Bearer token auth. Leave this unset to keep using bearer tokens.
+    """
+    return os.getenv("TASKTRACKER_BASIC_AUTH")
+
+
 def get_postgres_checkpoint_url() -> Optional[str]:
     """
     Optional Postgres connection string for LangGraph checkpointer.

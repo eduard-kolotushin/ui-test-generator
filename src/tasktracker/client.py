@@ -5,7 +5,11 @@ from typing import Any, Dict, List, Optional
 
 import httpx
 
-from src.config import get_tasktracker_base_url, get_tasktracker_token
+from src.config import (
+    get_tasktracker_base_url,
+    get_tasktracker_basic_auth,
+    get_tasktracker_token,
+)
 
 
 @dataclass
@@ -26,6 +30,7 @@ class TaskTrackerClient:
 
     base_url: str
     token: Optional[str] = None
+    basic_auth: Optional[str] = None
     timeout: float = 30.0
 
     def __post_init__(self) -> None:
@@ -40,6 +45,7 @@ class TaskTrackerClient:
         return cls(
             base_url=get_tasktracker_base_url(),
             token=get_tasktracker_token(),
+            basic_auth=get_tasktracker_basic_auth(),
         )
 
     def _build_headers(self) -> Dict[str, str]:
@@ -47,7 +53,14 @@ class TaskTrackerClient:
             "Content-Type": "application/json",
             "Accept": "application/json",
         }
-        if self.token:
+        # Prefer Basic auth if configured, otherwise fall back to bearer token.
+        if self.basic_auth:
+            import base64
+
+            raw = self.basic_auth.encode("utf-8")
+            b64 = base64.b64encode(raw).decode("ascii")
+            headers["Authorization"] = f"Basic {b64}"
+        elif self.token:
             headers["Authorization"] = f"Bearer {self.token}"
         return headers
 

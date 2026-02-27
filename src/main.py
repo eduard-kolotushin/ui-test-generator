@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import uuid
 from typing import Any, Dict
 
 from dotenv import load_dotenv
@@ -68,7 +69,14 @@ def main() -> None:
     parser.add_argument(
         "--interactive",
         action="store_true",
-        help="Run in a simple REPL loop instead of one-shot mode.",
+        help="Run in a simple REPL loop instead of one-shot mode (chat with history).",
+    )
+    parser.add_argument(
+        "--thread-id",
+        help=(
+            "Optional thread id for chat history. "
+            "If omitted in interactive mode, a random id is generated."
+        ),
     )
     args = parser.parse_args()
 
@@ -79,20 +87,23 @@ def main() -> None:
     agent = build_agent()
 
     if args.interactive:
+        thread_id = args.thread_id or str(uuid.uuid4())
+        print(f"Starting interactive UI Test Generator. Thread id: {thread_id}")
         print("Starting interactive UI Test Generator. Type Ctrl+C to exit.")
         try:
             while True:
                 line = input("> ").strip()
                 if not line:
                     continue
-                result = run_once(agent, line)
+                result = run_once(agent, line, thread_id=thread_id)
                 _pretty_print_result(result)
         except KeyboardInterrupt:
             print("\nExiting.")
     else:
         if not args.prompt:
             parser.error("You must provide PROMPT or use --interactive.")
-        result = run_once(agent, args.prompt)
+        # One-shot mode: you can optionally pass a thread id to reuse history
+        result = run_once(agent, args.prompt, thread_id=args.thread_id)
         _pretty_print_result(result)
 
 

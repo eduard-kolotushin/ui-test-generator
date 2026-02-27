@@ -75,3 +75,26 @@ def get_tasktracker_token() -> Optional[str]:
     """
     return os.getenv("TASKTRACKER_TOKEN")
 
+
+def get_postgres_checkpoint_url() -> Optional[str]:
+    """
+    Optional Postgres connection string for LangGraph checkpointer.
+
+    If set (e.g. `postgresql://user:pass@host:5432/dbname`), the agent will
+    use a Postgres-backed checkpointer so chat history persists across
+    restarts. Otherwise an in-memory checkpointer is used.
+    """
+    return os.getenv("POSTGRES_CHECKPOINT_URL")
+
+
+def get_postgres_store_url() -> Optional[str]:
+    """
+    Optional Postgres connection string for a LangGraph Store.
+
+    If set, the agent will try to use a Postgres-backed store for
+    `/memories/*` via StoreBackend. Otherwise an in-memory store is used.
+    """
+    return os.getenv("POSTGRES_STORE_URL")
+
+
+

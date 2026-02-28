@@ -32,7 +32,7 @@ uv sync
 3. **Set environment variables** (at minimum):
 
 - **GigaChat**:
-  - `GIGACHAT_CREDENTIALS` – auth token.
+  - `GIGACHAT_API_KEY` – auth token.
   - `GIGACHAT_VERIFY_SSL` – `true`/`false` (controls certificate verification).
 - **TaskTracker**:
   - `TASKTRACKER_BASE_URL` – base URL of the TaskTracker API (e.g. `https://portal.works.prod.sbt/swtr`).

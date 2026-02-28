@@ -463,15 +463,15 @@ wheels = [
 
 [[package]]
 name = "langchain-gigachat-lc1"
-version = "0.4.0b6"
-source = { path = "wheels/langchain_gigachat_lc1-0.4.0b6-py3-none-any.whl" }
+version = "0.4.0b7"
+source = { path = "wheels/langchain_gigachat_lc1-0.4.0b7-py3-none-any.whl" }
 dependencies = [
     { name = "gigachat" },
     { name = "langchain-core" },
     { name = "python-dotenv" },
 ]
 wheels = [
-    { filename = "langchain_gigachat_lc1-0.4.0b6-py3-none-any.whl", hash = "sha256:933208682212c6e3ef2d7ec2c4aa7e847f610cc592d42e53b8f60a85975123de" },
+    { filename = "langchain_gigachat_lc1-0.4.0b7-py3-none-any.whl", hash = "sha256:eac63d83990bba304907384d6a0314758c6839b84d7dcdb089fc303ca03ca582" },
 ]
 
 [package.metadata]
@@ -916,7 +916,7 @@ requires-dist = [
     { name = "deepagents", specifier = ">=0.4.3" },
     { name = "fastapi", specifier = ">=0.115.0" },
     { name = "httpx", specifier = ">=0.28.0" },
-    { name = "langchain-gigachat-lc1", path = "wheels/langchain_gigachat_lc1-0.4.0b6-py3-none-any.whl" },
+    { name = "langchain-gigachat-lc1", path = "wheels/langchain_gigachat_lc1-0.4.0b7-py3-none-any.whl" },
     { name = "langgraph-checkpoint-postgres", specifier = ">=3.0.4" },
     { name = "pydantic", specifier = ">=2.12.0" },
     { name = "python-dotenv", specifier = ">=1.0.0" },

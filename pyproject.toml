@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
   "deepagents>=0.4.3",
-  "langchain-gigachat-lc1>=0.4.0b5",
+  "langchain-gigachat-lc1>=0.4.0b6",
   "langgraph-checkpoint-postgres>=3.0.4",
   "fastapi>=0.115.0",
   "httpx>=0.28.0",
@@ -18,6 +18,10 @@ dependencies = [
   "python-dotenv>=1.0.0",
   "uvicorn>=0.32.0",
 ]
+
+[tool.uv.sources]
+# Use local patched wheel (fixes tool schema bug). Run from project root.
+langchain-gigachat-lc1 = { path = "wheels/langchain_gigachat_lc1-0.4.0b6-py3-none-any.whl" }
 
 [tool.hatch.build.targets.wheel]
 packages = ["src"]

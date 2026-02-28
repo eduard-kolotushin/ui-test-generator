@@ -463,16 +463,22 @@ wheels = [
 
 [[package]]
 name = "langchain-gigachat-lc1"
-version = "0.4.0b5"
-source = { registry = "https://pypi.org/simple" }
+version = "0.4.0b6"
+source = { path = "wheels/langchain_gigachat_lc1-0.4.0b6-py3-none-any.whl" }
 dependencies = [
     { name = "gigachat" },
     { name = "langchain-core" },
     { name = "python-dotenv" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/f9/ee/0f20a6226c28aec8d243c7714d1b4bdfbd4dcfc5a9bef0261a300749c4b5/langchain_gigachat_lc1-0.4.0b5.tar.gz", hash = "sha256:bf6dd01fe1ea3f27c7ef07f718a208ea4f13fc426ea6696749308158ac8339ad", size = 23583, upload-time = "2026-02-25T15:13:31.774Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/4d/7e/a5238ba6ec5fefee5418fb89bf4f796d2da0bd9022eae3f4587ea3a9c516/langchain_gigachat_lc1-0.4.0b5-py3-none-any.whl", hash = "sha256:47bde884fa2aa5aa5ba3890634bd201d7e2d66d95f42afa14e166bb8afbd586d", size = 26940, upload-time = "2026-02-25T15:13:33.498Z" },
+    { filename = "langchain_gigachat_lc1-0.4.0b6-py3-none-any.whl", hash = "sha256:933208682212c6e3ef2d7ec2c4aa7e847f610cc592d42e53b8f60a85975123de" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "gigachat", specifier = ">=0.2.0,<0.3" },
+    { name = "langchain-core", specifier = ">=1,<2" },
+    { name = "python-dotenv", specifier = ">=1.2.1" },
 ]
 
 [[package]]
@@ -910,7 +916,7 @@ requires-dist = [
     { name = "deepagents", specifier = ">=0.4.3" },
     { name = "fastapi", specifier = ">=0.115.0" },
     { name = "httpx", specifier = ">=0.28.0" },
-    { name = "langchain-gigachat-lc1", specifier = ">=0.4.0b5" },
+    { name = "langchain-gigachat-lc1", path = "wheels/langchain_gigachat_lc1-0.4.0b6-py3-none-any.whl" },
     { name = "langgraph-checkpoint-postgres", specifier = ">=3.0.4" },
     { name = "pydantic", specifier = ">=2.12.0" },
     { name = "python-dotenv", specifier = ">=1.0.0" },

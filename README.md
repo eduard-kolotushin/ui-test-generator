@@ -12,7 +12,7 @@ The agent:
 
 - **Language**: Python (managed with `uv`).
 - **Agent framework**: `deepagents`.
-- **LLM**: `langchain-gigachat` (GigaChat).
+- **LLM**: `langchain-gigachat-lc1` (GigaChat). This project pins a **local wheel** in `wheels/` (patched for [tool schema bug #55](https://github.com/ai-forever/langchain-gigachat/issues/55)); run `uv sync` to use it.
 - **HTTP client**: `httpx`.
 
 ### Quick start

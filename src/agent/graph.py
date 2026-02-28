@@ -30,9 +30,11 @@ def build_gigachat_model() -> GigaChat:
     Construct a LangChain-compatible GigaChat model using env-based config.
     """
     return GigaChat(
+        model="GigaChat-2-Max",
         credentials=get_gigachat_credentials(),
         verify_ssl_certs=get_gigachat_verify_ssl(),
         scope="GIGACHAT_API_CORP",
+        timeout=(10. * 60),
     )
 
 

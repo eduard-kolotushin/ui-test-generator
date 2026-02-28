@@ -31,13 +31,14 @@ class TaskTrackerClient:
     base_url: str
     token: Optional[str] = None
     basic_auth: Optional[str] = None
-    timeout: float = 30.0
+    timeout: float = 300.0
 
     def __post_init__(self) -> None:
         self._client = httpx.Client(
             base_url=self.base_url,
             timeout=self.timeout,
             headers=self._build_headers(),
+            verify=False,
         )
 
     @classmethod

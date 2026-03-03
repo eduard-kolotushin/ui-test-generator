@@ -1,0 +1,10 @@
+{
+  "dependencies": [
+    "."
+  ],
+  "env": "./.env",
+  "graphs": {
+    "ui-test-agent": "./src/agent/graph.py:build_agent"
+  }
+}
+

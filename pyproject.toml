@@ -26,3 +26,8 @@ langchain-gigachat-lc1 = { path = "wheels/langchain_gigachat_lc1-0.4.0b7-py3-non
 [tool.hatch.build.targets.wheel]
 packages = ["src"]
 
+[project.optional-dependencies]
+dev = [
+  "langgraph-cli>=0.4.14",
+]
+

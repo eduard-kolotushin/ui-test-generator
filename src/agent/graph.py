@@ -136,6 +136,14 @@ def build_agent() -> Any:
         checkpointer=checkpointer,
         backend=backend,
         store=store,
+        # Human-in-the-loop interrupts on mutating TaskTracker operations.
+        # For these tools the agent will pause and request approval/edit/reject
+        # before executing the call.
+        interrupt_on={
+            "create_folder": True,
+            "create_test_case": True,
+            "update_test_case": True,
+        },
     )
     return agent
 

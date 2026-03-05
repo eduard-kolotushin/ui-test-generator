@@ -13,6 +13,7 @@ dependencies = [
   "langchain-gigachat-lc1>=0.4.0b7",
   "langchain-openai>=1.1.10",
   "langgraph-checkpoint-postgres>=3.0.4",
+  "langgraph-cli>=0.4.14",
   "fastapi>=0.115.0",
   "httpx>=0.28.0",
   "pydantic>=2.12.0",

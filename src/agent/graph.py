@@ -31,6 +31,11 @@ from src.config import (
 
 GIGACHAT_MODELS: Set[str] = {"GigaChat-2", "GigaChat-2-Pro", "GigaChat-2-Max"}
 
+_CHECKPOINTER_CM: Optional[Any] = None
+_CHECKPOINTER: Optional[Any] = None
+_STORE_CM: Optional[Any] = None
+_STORE: Optional[Any] = None
+
 
 def build_gigachat_model(model_name: str) -> GigaChat:
     """
@@ -53,22 +58,28 @@ def build_checkpointer() -> Any:
       use it so chat history persists across restarts.
     - Otherwise fall back to an in-memory saver (good for local dev).
     """
+    global _CHECKPOINTER_CM, _CHECKPOINTER
+
     dsn = get_postgres_checkpoint_url()
-    if dsn:
-        try:
-            from langgraph.checkpoint.postgres import (  # type: ignore[import]
-                PostgresSaver,
-            )
-        except ImportError:  # pragma: no cover - optional dependency
-            # Fall back to in-memory if Postgres saver is not installed.
-            return InMemorySaver()
+    if not dsn:
+        return InMemorySaver()
 
-        checkpointer = PostgresSaver.from_conn_string(dsn)
-        # Ensure tables exist; safe to call multiple times.
-        checkpointer.setup()
-        return checkpointer
+    if _CHECKPOINTER is not None:
+        return _CHECKPOINTER
 
-    return InMemorySaver()
+    try:
+        from langgraph.checkpoint.postgres import (  # type: ignore[import]
+            PostgresSaver,
+        )
+    except ImportError:  # pragma: no cover - optional dependency
+        return InMemorySaver()
+
+    # from_conn_string returns a context manager; keep it in a module-level
+    # variable so the underlying saver (and its pool) stay alive.
+    _CHECKPOINTER_CM = PostgresSaver.from_conn_string(dsn)
+    _CHECKPOINTER = _CHECKPOINTER_CM.__enter__()
+    _CHECKPOINTER.setup()
+    return _CHECKPOINTER
 
 
 def build_hub_model(model_name: str) -> ChatOpenAI:
@@ -129,20 +140,28 @@ def build_store() -> Any:
       available, use that for `/memories/*`.
     - Otherwise fall back to an in-memory store (good for local dev).
     """
+    global _STORE_CM, _STORE
+
     dsn = get_postgres_store_url()
-    if dsn:
-        try:
-            from langgraph.store.postgres import (  # type: ignore[import]
-                PostgresStore,
-            )
-        except ImportError:  # pragma: no cover - optional dependency
-            return InMemoryStore()
+    if not dsn:
+        return InMemoryStore()
 
-        store = PostgresStore.from_conn_string(dsn)
-        store.setup()
-        return store
+    if _STORE is not None:
+        return _STORE
 
-    return InMemoryStore()
+    try:
+        from langgraph.store.postgres import (  # type: ignore[import]
+            PostgresStore,
+        )
+    except ImportError:  # pragma: no cover - optional dependency
+        return InMemoryStore()
+
+    # from_conn_string returns a context manager; keep it in a module-level
+    # variable so the underlying store (and its pool) stay alive.
+    _STORE_CM = PostgresStore.from_conn_string(dsn)
+    _STORE = _STORE_CM.__enter__()
+    _STORE.setup()
+    return _STORE
 
 
 def build_agent() -> Any:

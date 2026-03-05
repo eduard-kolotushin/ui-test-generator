@@ -67,3 +67,26 @@ TASKTRACKER_USE_STUB=true
 
 3. Run the agent as usual; it will talk to the local stub instead of the real API.
 
+### Deep Agents UI (optional chat UI)
+
+You can use [deep-agents-ui](https://github.com/langchain-ai/deep-agents-ui) as a web UI on top of this agent.
+
+1. **Start the agent server** (for example with LangGraph dev, in a separate env that supports it):
+
+```bash
+langgraph dev
+```
+
+This uses `langgraph.json` and serves the `ui-test-agent` graph locally.
+
+2. **Clone and run Deep Agents UI**:
+
+```bash
+git clone https://github.com/langchain-ai/deep-agents-ui.git
+cd deep-agents-ui
+yarn install            # or: npm install / pnpm install
+yarn dev                # or: npm run dev
+```
+
+The UI will start on `http://localhost:3000`. Point it at your LangGraph deployment / local dev server (Deployment URL + Assistant ID) for this project to chat with the `ui-test-agent`.
+

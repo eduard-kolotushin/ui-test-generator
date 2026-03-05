@@ -1,10 +1,11 @@
 from __future__ import annotations
 
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Set
 
 from deepagents import create_deep_agent
 from deepagents.backends import CompositeBackend, StateBackend, StoreBackend
 from langchain_gigachat import GigaChat
+from langchain_openai import ChatOpenAI
 from langgraph.checkpoint.memory import InMemorySaver
 from langgraph.store.memory import InMemoryStore
 
@@ -20,17 +21,23 @@ from src.agent.tools import (
 from src.config import (
     get_gigachat_credentials,
     get_gigachat_verify_ssl,
+    get_hub_api_key,
+    get_hub_base_url,
+    get_model_name,
     get_postgres_checkpoint_url,
     get_postgres_store_url,
 )
 
 
-def build_gigachat_model() -> GigaChat:
+GIGACHAT_MODELS: Set[str] = {"GigaChat-2", "GigaChat-2-Pro", "GigaChat-2-Max"}
+
+
+def build_gigachat_model(model_name: str) -> GigaChat:
     """
     Construct a LangChain-compatible GigaChat model using env-based config.
     """
     return GigaChat(
-        model="GigaChat-2-Max",
+        model=model_name,
         credentials=get_gigachat_credentials(),
         verify_ssl_certs=get_gigachat_verify_ssl(),
         scope="GIGACHAT_API_CORP",
@@ -62,6 +69,36 @@ def build_checkpointer() -> Any:
         return checkpointer
 
     return InMemorySaver()
+
+
+def build_hub_model(model_name: str) -> ChatOpenAI:
+    """
+    Construct a ChatOpenAI model pointed at an OpenAI-compatible HUB.
+
+    The HUB is configured via `HUB_BASE_URL` and `HUB_API_KEY` env vars and
+    can host OSS models like Qwen, Code Llama, etc.
+    """
+    base_url = get_hub_base_url()
+    api_key = get_hub_api_key()
+    return ChatOpenAI(
+        model=model_name,
+        base_url=base_url,
+        api_key=api_key,
+        timeout=600,
+    )
+
+
+def build_model() -> Any:
+    """
+    Select the LLM to use based on `LLM_MODEL`.
+
+    If the model name is one of the GigaChat family, use GigaChat; otherwise
+    treat it as a HUB model served via an OpenAI-compatible endpoint.
+    """
+    model_name = get_model_name()
+    if model_name in GIGACHAT_MODELS:
+        return build_gigachat_model(model_name)
+    return build_hub_model(model_name)
 
 
 def build_backend() -> Any:
@@ -123,7 +160,7 @@ def build_agent() -> Any:
         update_test_case_tool(),
     ]
 
-    model = build_gigachat_model()
+    model = build_model()
     checkpointer = build_checkpointer()
     backend = build_backend()
     store = build_store()

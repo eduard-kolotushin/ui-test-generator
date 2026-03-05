@@ -107,4 +107,41 @@ def get_postgres_store_url() -> Optional[str]:
     return os.getenv("POSTGRES_STORE_URL")
 
 
+def get_model_name() -> str:
+    """
+    Name of the LLM model to use.
+
+    Defaults to "GigaChat-2". If the name is one of the GigaChat family
+    ("GigaChat-2", "GigaChat-2-Pro", "GigaChat-2-Max") the agent will use
+    the GigaChat backend; otherwise it will use the OpenAI-compatible HUB
+    backend.
+    """
+    return os.getenv("LLM_MODEL", "GigaChat-2")
+
+
+def get_hub_base_url() -> str:
+    """
+    Base URL for the OpenAI-compatible HUB where OSS models are hosted.
+
+    Example: http://localhost:12434/v1
+    """
+    value = os.getenv("HUB_BASE_URL")
+    if not value:
+        raise RuntimeError(
+            "HUB_BASE_URL is not set. "
+            "Set it to your OpenAI-compatible HUB endpoint, e.g. "
+            "http://localhost:12434/v1"
+        )
+    return value.rstrip("/")
+
+
+def get_hub_api_key() -> str:
+    """
+    API key for the HUB (OpenAI-compatible) models.
+
+    If your HUB does not enforce auth, you can set a dummy value.
+    """
+    return os.getenv("HUB_API_KEY", "sk-local")
+
+
 

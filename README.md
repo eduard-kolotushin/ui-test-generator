@@ -12,7 +12,9 @@ The agent:
 
 - **Language**: Python (managed with `uv`).
 - **Agent framework**: `deepagents`.
-- **LLM**: `langchain-gigachat-lc1` (GigaChat). This project pins a **local wheel** in `wheels/` (patched for [tool schema bug #55](https://github.com/ai-forever/langchain-gigachat/issues/55)); run `uv sync` to use it.
+- **LLM**:
+  - Default: `GigaChat-2` via `langchain-gigachat-lc1` (local wheel in `wheels/`, patched for [tool schema bug #55](https://github.com/ai-forever/langchain-gigachat/issues/55)).
+  - Other models: any OpenAI-compatible model served from your **HUB** (Qwen, Code Llama, etc.) via `langchain-openai`.
 - **HTTP client**: `httpx`.
 
 ### Quick start
@@ -31,9 +33,14 @@ uv sync
 
 3. **Set environment variables** (at minimum):
 
-- **GigaChat**:
+- **Model selection**:
+  - `LLM_MODEL` – name of the model to use. Defaults to `GigaChat-2`. If the value is one of `["GigaChat-2", "GigaChat-2-Pro", "GigaChat-2-Max"]`, the agent uses GigaChat; otherwise it uses your HUB (see below).
+- **GigaChat** (used when `LLM_MODEL` is a GigaChat model):
   - `GIGACHAT_API_KEY` – auth token.
   - `GIGACHAT_VERIFY_SSL` – `true`/`false` (controls certificate verification).
+- **HUB (OpenAI-compatible OSS models)** – used when `LLM_MODEL` is *not* a GigaChat model:
+  - `HUB_BASE_URL` – base URL of your HUB, e.g. `http://localhost:12434/v1`.
+  - `HUB_API_KEY` – API key for the HUB (dummy value is fine if your HUB doesn’t enforce auth).
 - **TaskTracker**:
   - `TASKTRACKER_BASE_URL` – base URL of the TaskTracker API (e.g. `https://portal.works.prod.sbt/swtr`).
   - `TASKTRACKER_TOKEN` – optional bearer token if your deployment requires it.

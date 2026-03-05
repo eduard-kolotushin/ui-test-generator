@@ -6,7 +6,7 @@ from src.tasktracker.client import TaskTrackerClient, flatten_test_cases
 
 
 def get_root_folder_units(
-    space_id_code: str = "TMS",
+    space_id_code: str = "PVM",
     page: int = 0,
     size: int = 50,
 ) -> Dict[str, Any]:
@@ -24,7 +24,7 @@ def get_root_folder_units(
 def create_folder(
     name: str,
     parent_id_code: str,
-    space_id_code: str = "TMS",
+    space_id_code: str = "PVM",
 ) -> Dict[str, Any]:
     """
     Low-level API wrapper: create a folder under the given parent.

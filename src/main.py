@@ -9,6 +9,9 @@ from dotenv import load_dotenv
 from langgraph.types import Command
 
 from src.agent.graph import build_agent, run_once
+import logging
+
+logging.basicConfig(level=logging.INFO)
 
 
 def _message_content(msg: Any) -> Any:

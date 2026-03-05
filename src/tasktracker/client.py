@@ -70,7 +70,7 @@ class TaskTrackerClient:
     def get_root_folder_units(
         self,
         *,
-        space_id_code: str = "TMS",
+        space_id_code: str = "PVM",
         page: int = 0,
         size: int = 50,
     ) -> Dict[str, Any]:
@@ -99,7 +99,7 @@ class TaskTrackerClient:
         self,
         name: str,
         parent_id_code: str,
-        space_id_code: str = "TMS",
+        space_id_code: str = "PVM",
     ) -> Dict[str, Any]:
         """
         Create a folder under the given parent.

@@ -10,7 +10,8 @@ version: 0.1.0
 tags:
   - tasktracker
   - ui-tests
-  - tms
+  - pvm
+  - view
   - test-generation
 ---
 
@@ -33,10 +34,10 @@ You have access to the following TaskTracker-specific tools:
 
 - `get_root_folder_units(space_id_code, page, size)`  
   Get the root folder hierarchy and paginated units. Use this to discover
-  folder structure and root-level test cases (e.g. space_id_code `TMS`).
+  folder structure and root-level test cases (e.g. space_id_code `PVM`).
 
 - `create_folder(name, parent_id_code, space_id_code)`  
-  Create a new folder under the given parent. Parent is often `TMS_test_case`
+  Create a new folder under the given parent. Parent is often `PVM_test_case`
   for the root test-case tree, or a child folder code from the hierarchy.
 
 **Test cases**

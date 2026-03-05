@@ -20,8 +20,8 @@ from src.tasktracker.tools import (
 
 class GetRootFolderUnitsInput(BaseModel):
     space_id_code: str = Field(
-        "TMS",
-        description="Space ID code for the root folder (e.g. TMS).",
+        "PVM",
+        description="Space ID code for the root folder (e.g. VIEW, PVM).",
     )
     page: int = Field(0, description="Page number (0-based).", ge=0)
     size: int = Field(50, description="Page size.", ge=1, le=500)
@@ -49,8 +49,8 @@ class CreateFolderInput(BaseModel):
         ),
     )
     space_id_code: str = Field(
-        "TMS",
-        description="Space ID code (e.g. TMS).",
+        "PVM",
+        description="Space ID code (e.g. VIEW, PVM).",
     )
 
 
@@ -134,7 +134,7 @@ def create_test_case_tool() -> StructuredTool:
 class UpdateTestCaseInput(BaseModel):
     code: str = Field(
         ...,
-        description="Code of the existing TaskTracker test case to update, e.g. `TMS-123`.",
+        description="Code of the existing TaskTracker test case to update, e.g. `PVM-123`.",
     )
     patch_json: Dict[str, Any] = Field(
         ...,
@@ -160,7 +160,7 @@ def update_test_case_tool() -> StructuredTool:
 class GetSingleTestCaseInput(BaseModel):
     code: str = Field(
         ...,
-        description="Code of the TaskTracker test case to fetch, e.g. `TMS-123`.",
+        description="Code of the TaskTracker test case to fetch, e.g. `PVM-123`.",
     )
 
 

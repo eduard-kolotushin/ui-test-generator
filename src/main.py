@@ -6,6 +6,7 @@ import uuid
 from typing import Any, Dict
 
 from dotenv import load_dotenv
+from langgraph.types import Command
 
 from src.agent.graph import build_agent, run_once
 
@@ -90,12 +91,100 @@ def main() -> None:
         thread_id = args.thread_id or str(uuid.uuid4())
         print(f"Starting interactive UI Test Generator. Thread id: {thread_id}")
         print("Starting interactive UI Test Generator. Type Ctrl+C to exit.")
+        config = {"configurable": {"thread_id": thread_id}}
         try:
             while True:
                 line = input("> ").strip()
                 if not line:
                     continue
-                result = run_once(agent, line, thread_id=thread_id)
+
+                # First, invoke the agent with the user's message.
+                result = agent.invoke(
+                    {
+                        "messages": [
+                            {
+                                "role": "user",
+                                "content": line,
+                            }
+                        ]
+                    },
+                    config=config,
+                )
+
+                # Handle human-in-the-loop interrupts for mutating tools.
+                while result.get("__interrupt__"):
+                    interrupts = result["__interrupt__"][0].value
+                    action_requests = interrupts["action_requests"]
+                    review_configs = interrupts["review_configs"]
+
+                    config_map = {cfg["action_name"]: cfg for cfg in review_configs}
+
+                    decisions = []
+                    for idx, action in enumerate(action_requests, start=1):
+                        review_config = config_map.get(action["name"], {})
+                        allowed = review_config.get(
+                            "allowed_decisions", ["approve", "edit", "reject"]
+                        )
+                        print(
+                            f"\nPending tool call #{idx}: {action['name']}"
+                            f"\n  args: {json.dumps(action['args'], ensure_ascii=False)}"
+                            f"\n  allowed decisions: {allowed}\n"
+                        )
+                        while True:
+                            choice = (
+                                input(
+                                    f"Decision for {action['name']} "
+                                    f"({', '.join(allowed)}): "
+                                )
+                                .strip()
+                                .lower()
+                            )
+                            if choice not in allowed:
+                                print("Invalid choice, try again.")
+                                continue
+
+                            if choice == "edit":
+                                # Let the user edit the tool arguments as JSON.
+                                print(
+                                    "Enter edited args as JSON. "
+                                    "Press Enter to keep the original args."
+                                )
+                                while True:
+                                    edited = input("Edited args JSON: ").strip()
+                                    if not edited:
+                                        edited_args = action["args"]
+                                        break
+                                    try:
+                                        edited_args = json.loads(edited)
+                                        if not isinstance(edited_args, dict):
+                                            print(
+                                                "Edited args must be a JSON object "
+                                                "(e.g. {\"key\": \"value\"})."
+                                            )
+                                            continue
+                                        break
+                                    except json.JSONDecodeError as e:
+                                        print(f"Invalid JSON: {e}. Try again.")
+
+                                decisions.append(
+                                    {
+                                        "type": "edit",
+                                        "edited_action": {
+                                            "name": action["name"],
+                                            "args": edited_args,
+                                        },
+                                    }
+                                )
+                            else:
+                                decisions.append({"type": choice})
+                            break
+
+                    # Resume execution with the collected decisions.
+                    result = agent.invoke(
+                        Command(resume={"decisions": decisions}),
+                        config=config,
+                    )
+
                 _pretty_print_result(result)
         except KeyboardInterrupt:
             print("\nExiting.")

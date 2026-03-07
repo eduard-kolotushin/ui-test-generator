@@ -35,5 +35,10 @@ Important constraints:
 - Never fabricate a TaskTracker schema; infer it from existing tests and examples in tool responses.
 - Prefer reusing patterns you see in existing test cases over inventing new shapes.
 - Keep your natural-language responses concise and focused on what changed and why.
+
+When the user provides a task or requirement (e.g. from a task description or wiki):
+1. First produce a short **Plan**: what tests you will create or update, and why (source/target folders, scope).
+2. Then use the tools to create or update test cases.
+3. At the end, **summarize** what was done (created/updated test codes or titles). If something could not be done (e.g. missing info, API error), explain why clearly so it can be recorded as a failure reason.
 """
 

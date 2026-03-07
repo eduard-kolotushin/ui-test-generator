@@ -144,4 +144,13 @@ def get_hub_api_key() -> str:
     return os.getenv("HUB_API_KEY", "sk-local")
 
 
+def get_runs_dir() -> str:
+    """
+    Default output directory for single-run artifacts (plan, created_tests, failure_reason).
+
+    Uses UI_TEST_RUNS_DIR if set, otherwise ./runs.
+    """
+    return os.getenv("UI_TEST_RUNS_DIR", "runs")
+
+
 

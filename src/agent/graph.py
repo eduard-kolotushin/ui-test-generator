@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Any, Dict, Optional, Set
 
 from deepagents import create_deep_agent
+from langgraph.types import Command
 from deepagents.backends import CompositeBackend, StateBackend, StoreBackend
 from langchain_gigachat import GigaChat
 from langchain_openai import ChatOpenAI
@@ -223,4 +224,30 @@ def run_once(agent: Any, user_message: str, thread_id: Optional[str] = None) -> 
         config = {"configurable": {"thread_id": thread_id}}
         return agent.invoke(payload, config)
     return agent.invoke(payload)
+
+
+def run_until_done(
+    agent: Any,
+    payload: Dict[str, Any],
+    config: Dict[str, Any],
+    *,
+    auto_approve: bool = False,
+) -> Dict[str, Any]:
+    """
+    Run the agent until no interrupt is pending.
+
+    If `auto_approve` is True, any human-in-the-loop interrupt is resolved
+    by approving all pending tool calls. Otherwise callers must handle
+    `result["__interrupt__"]` themselves (e.g. interactive REPL).
+    """
+    result = agent.invoke(payload, config)
+    while result.get("__interrupt__") and auto_approve:
+        interrupts = result["__interrupt__"][0].value
+        action_requests = interrupts["action_requests"]
+        decisions = [{"type": "approve"} for _ in action_requests]
+        result = agent.invoke(
+            Command(resume={"decisions": decisions}),
+            config=config,
+        )
+    return result
 

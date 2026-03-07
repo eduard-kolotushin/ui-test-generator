@@ -44,6 +44,8 @@ uv sync
 - **TaskTracker**:
   - `TASKTRACKER_BASE_URL` – base URL of the TaskTracker API (e.g. `https://portal.works.prod.sbt/swtr`).
   - `TASKTRACKER_TOKEN` – optional bearer token if your deployment requires it.
+- **Single-run mode** (optional):
+  - `UI_TEST_RUNS_DIR` – directory for run artifacts (default: `runs`). See [Single-run mode](#single-run-mode-non-interactive).
 
 4. **Run the agent**:
 
@@ -52,6 +54,54 @@ uv run python -m src.main "Generate tests in folder 'abyss datasource' based on 
 ```
 
 This will construct a Deep Agent with TaskTracker tools and print the model’s final response.
+
+### Single-run mode (non-interactive)
+
+You can run the agent in a **single run** without any user interaction: it takes a task code or raw requirement, runs until done (auto-approving tool calls), and writes artifacts to the filesystem.
+
+**Options:**
+
+- **By task code** – the agent gets the task/unit content from TaskTracker and designs tests from it:
+
+```bash
+uv run python -m src.main single-run --task-code PVM-123
+```
+
+- **By raw prompt** – you pass the requirement text directly (e.g. paste from a wiki):
+
+```bash
+uv run python -m src.main single-run --prompt "Add smoke tests for the new login flow."
+```
+
+- **Both** – task code for context plus an extra requirement:
+
+```bash
+uv run python -m src.main single-run --task-code PVM-123 --prompt "Focus on negative cases."
+```
+
+**Artifacts** are written under an output directory (default: `runs`, or `UI_TEST_RUNS_DIR` in `.env`). Each run gets a subfolder (by default a UUID) with:
+
+- `plan.md` – agent's plan and reasoning
+- `created_tests.json` – list of created/updated test cases (tool name, args, result)
+- `failure_reason.txt` – only if the run failed (exception or agent-reported failure)
+
+**CLI flags:**
+
+- `--output-dir DIR` – override the output directory (default: env `UI_TEST_RUNS_DIR` or `runs`)
+- `--run-id ID` – use a fixed run id instead of a generated UUID
+- `--dry-run` – do not create or update anything in TaskTracker (read-only; `--task-code` still fetches the real task). Use to get plan and created_tests.json without writing to TaskTracker.
+
+Example with custom output dir and run id:
+
+```bash
+uv run python -m src.main single-run --prompt "List root folders" --output-dir ./my-runs --run-id my-run-1
+```
+
+Dry run (fetch real task, plan and artifacts only; no test cases created in TaskTracker):
+
+```bash
+uv run python -m src.main single-run --task-code PVM-123 --dry-run
+```
 
 ### Local testing without TaskTracker (stub)
 
@@ -73,6 +123,8 @@ TASKTRACKER_USE_STUB=true
 ```
 
 3. Run the agent as usual; it will talk to the local stub instead of the real API.
+
+4. **Call the stub from Cursor:** Open **`api/tasktracker-stub.http`**, install the **REST Client** extension (Huachao Mao) if needed, then click **Send Request** above any request. (Thunder Client free version does not support Cursor.)
 
 ### Deep Agents UI (optional chat UI)
 

@@ -1,0 +1,31 @@
+### TaskTracker Stub – create sample feature for single-run agent testing
+### 1. Start stub:  uv run python -m src.tasktracker.stub
+### 2. Send this request; note the returned id (e.g. STUB-1)
+### 3. Run agent:  uv run python -m src.main single-run --task-code STUB-1
+
+@baseUrl = http://127.0.0.1:8765
+@contentType = application/json
+
+### Create sample feature (unit) – use returned id as --task-code in single-run
+POST {{baseUrl}}/rest/api/unit/v2/test_case/create
+Content-Type: {{contentType}}
+Accept: {{contentType}}
+
+{
+  "summary": "[New login] User can log in with email and password",
+  "description": "Feature: New login flow. Steps: 1) Open login page, 2) Enter email and password, 3) Click Sign in. Expected: user is redirected to dashboard. Covers happy path for the new auth flow.",
+  "suit": { "code": "test_case", "name": "Тест-кейс", "icon": "memo_pencil" },
+  "space": { "code": "PVM", "name": "Пространство PVM" },
+  "attributes": []
+}
+
+### Get all created tests (units in root folder)
+POST {{baseUrl}}/extension/plugin/v2/rest/api/swtr_tms_plugin/v1/folder/hierarchy/TMS_test_case/units/filtered
+Content-Type: {{contentType}}
+Accept: {{contentType}}
+
+{
+  "type": "TEST_CASE",
+  "linkedTo": null,
+  "unitFilters": { "page": { "page": 0, "size": 50 } }
+}

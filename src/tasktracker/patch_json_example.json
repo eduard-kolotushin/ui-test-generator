@@ -1,0 +1,50 @@
+{
+    "attributes": {
+        "test_step": {
+            "testStepList": [
+                {
+                    "code": "01727458-63a9-4ae7-ad94-8c014cf7e816",
+                    "stepDescription": {
+                        "formattedText": "{\"type\":\"doc\",\"content\":[{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Открыть файл конфигурации /opt/grafana/gse-plugin.ini с настройками healthcheck\"}]}]}",
+                        "plainText": "Открыть файл конфигурации /opt/grafana/gse-plugin.ini с настройками healthcheck "
+                    },
+                    "stepData": {
+                        "formattedText": "{\"type\":\"doc\",\"content\":[{\"type\":\"paragraph\",\"attrs\":{\"textAlign\":\"justify\"}}]}",
+                        "plainText": ""
+                    },
+                    "stepResult": {
+                        "formattedText": "{\"type\":\"doc\",\"content\":[{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Файл открыт для редактирования\"}]}]}",
+                        "plainText": "Файл открыт для редактирования [cite: 5]"
+                    },
+                    "callToTestId": null,
+                    "stepNumber": 1,
+                    "stepType": "step_by_step",
+                    "files": null,
+                    "deleted": false,
+                    "stepFiles": []
+                },
+                {
+                    "code": "05ee35fc-46ff-4a96-a075-c8d13ddb9034",
+                    "stepDescription": {
+                        "formattedText": "{\"type\":\"doc\",\"content\":[{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Проверить конфигурацию настроек по умолчанию в файле. Убедиться, что настройки установлены: INDICATOR_AUDIT_KAFKA_ENABLED=true, INDICATOR_HEALTHCHECK_AUDIT_ENABLED:true, INDICATOR_HEALTHCHECK_AUDIT_REQUIRED:true, INDICATOR_HEALTHCHECK_AUDIT_MAX_400_ERRORS:20, INDICATOR_HEALTHCHECK_AUDIT_MAX_500_ERRORS:20, INDICATOR_HEALTHCHECK_AUDIT_MAX_UNAVAILABLE_TIME:60, INDICATOR_HEALTHCHECK_AUDIT_PUBLIC_NAME: audit\"}]}]}",
+                        "plainText": "Проверить конфигурацию настроек по умолчанию в файле. Убедиться, что настройки установлены: INDICATOR_AUDIT_KAFKA_ENABLED=true, INDICATOR_HEALTHCHECK_AUDIT_ENABLED:true, INDICATOR_HEALTHCHECK_AUDIT_REQUIRED:true, INDICATOR_HEALTHCHECK_AUDIT_MAX_400_ERRORS:20, INDICATOR_HEALTHCHECK_AUDIT_MAX_500_ERRORS:20, INDICATOR_HEALTHCHECK_AUDIT_MAX_UNAVAILABLE_TIME:60, INDICATOR_HEALTHCHECK_AUDIT_PUBLIC_NAME: audit [cite: 7, 8, 9, 10, 11, 12]"
+                    },
+                    "stepData": {
+                        "formattedText": "{\"type\":\"doc\",\"content\":[{\"type\":\"paragraph\",\"attrs\":{\"textAlign\":\"justify\"}}]}",
+                        "plainText": ""
+                    },
+                    "stepResult": {
+                        "formattedText": "{\"type\":\"doc\",\"content\":[{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Настройки совпадают\"}]}]}",
+                        "plainText": "Настройки совпадают [cite: 13]"
+                    },
+                    "callToTestId": null,
+                    "stepNumber": 2,
+                    "stepType": "step_by_step",
+                    "files": null,
+                    "deleted": false,
+                    "stepFiles": []
+                }
+            ]
+        }
+    }
+}

@@ -1,0 +1,73 @@
+{
+    "summary": "[VIEW][HealthCheck] Доступность PVM LGDB FullTextIndex Service",
+    "description": null,
+    "code": null,
+    "space": "VIEW",
+    "suit": "test_case",
+    "draftsInfo": [],
+    "attributes": {
+        "space": "VIEW",
+        "tenant": "default",
+        "automated": null,
+        "Automation_framework": null,
+        "estimate": null,
+        "folder": "62f8066e-211a-49f6-8a20-def0196c7837",
+        "label": null,
+        "owner": null,
+        "precondition": null,
+        "priority": null,
+        "test_case_status": "draft",
+        "test_level": null,
+        "pmi": "not",
+        "component_version": null,
+        "product_version": null,
+        "CRPV_STS_SUPPORT": null,
+        "test_type": "integration_type",
+        "type_of_testing": "regress",
+        "old_jira_key": null,
+        "premigration_author": null,
+        "target_fp": null,
+        "product_name": null,
+        "product_code": null,
+        "component_code": null,
+        "AftTestCaseName": null,
+        "spec_for": null,
+        "more_than_1": null,
+        "case_version_relevant_from": null,
+        "not_updated_since_version": null,
+        "test_step": [
+            {
+                "code": "86e6ecaf-d14c-4e31-b1f0-3b44f12c7240",
+                "stepDescription": {
+                    "text": "{\"to\": 4, \"from\": 0, \"type\": \"doc\", \"content\": [{\"to\": 208, \"from\": 0, \"type\": \"paragraph\", \"attrs\": {\"id\": \"80e85b33-0921-41aa-b0f9-80414953086e\", \"textAlign\": \"left\"}, \"content\": [{\"to\": 47, \"from\": 1, \"text\": \"Перейти в Configmaps с настройками healthcheck\", \"type\": \"text\"}, {\"to\": 49, \"from\": 48, \"type\": \"hardBreak\"}, {\"to\": 205, \"from\": 50, \"text\": \"https://console.apps.dap.devpub-01.solution.sbt/k8s/ns/da-dp01-om-st-indicator-01/configmaps/inda-indicator-devops-973f8c-9a09ddb-indicator-env-cm-env/yaml\", \"type\": \"text\", \"marks\": [{\"type\": \"bold\"}]}, {\"to\": 207, \"from\": 206, \"type\": \"hardBreak\"}]}]}"
+                },
+                "stepData": {
+                    "text": "{\"to\": 4, \"from\": 0, \"type\": \"doc\", \"content\": [{\"to\": 2, \"from\": 0, \"type\": \"paragraph\", \"attrs\": {\"id\": \"b0a26c05-de0d-44a3-981c-11179c953f38\", \"textAlign\": \"justify\"}}]}"
+                },
+                "stepResult": {
+                    "text": "{\"to\": 4, \"from\": 0, \"type\": \"doc\", \"content\": [{\"to\": 18, \"from\": 0, \"type\": \"paragraph\", \"attrs\": {\"id\": \"14f715e3-647b-45c0-ab3b-04ecbf717e36\", \"textAlign\": \"left\"}, \"content\": [{\"to\": 17, \"from\": 1, \"text\": \"Переход выполнен\", \"type\": \"text\"}]}]}"
+                },
+                "callToTestId": null,
+                "stepNumber": 1,
+                "stepType": "step_by_step",
+                "files": null
+            },
+            {
+                "code": "804b28a0-77cd-47f1-856d-63ad406fa6bf",
+                "stepDescription": {
+                    "text": "{\"to\": 4, \"from\": 0, \"type\": \"doc\", \"content\": [{\"to\": 46, \"from\": 0, \"type\": \"paragraph\", \"attrs\": {\"id\": \"0a40897b-87f3-4620-879f-6bb4907944ca\", \"textAlign\": \"left\"}, \"content\": [{\"to\": 45, \"from\": 1, \"text\": \"Проверить конфигурацию настроек по умолчанию\", \"type\": \"text\", \"marks\": [{\"type\": \"bold\"}]}]}, {\"to\": 85, \"from\": 46, \"type\": \"paragraph\", \"attrs\": {\"id\": \"da654005-ed35-45ca-a492-f14b053ca952\", \"textAlign\": \"left\"}, \"content\": [{\"to\": 84, \"from\": 47, \"text\": \"Настройки установлены в соответствии:\", \"type\": \"text\"}]}, {\"to\": 3645, \"from\": 0, \"type\": \"bulletList\", \"attrs\": {\"start\": 1}, \"content\": [{\"to\": 472, \"from\": 1, \"type\": \"listItem\", \"content\": [{\"to\": 61, \"from\": 1, \"type\": \"paragraph\", \"attrs\": {\"id\": \"143028c3-f42e-4834-908b-1de64e29f747\", \"textAlign\": \"left\"}, \"content\": [{\"to\": 42, \"from\": 2, \"text\": \"INDICATOR_HEALTHCHECK_DATABASE_ENABLED: \", \"type\": \"text\"}, {\"to\": 47, \"from\": 43, \"text\": \"true\", \"type\": \"text\", \"marks\": [{\"type\": \"bold\"}]}, {\"to\": 49, \"from\": 48, \"type\": \"hardBreak\"}, {\"to\": 58, \"from\": 50, \"text\": \"вкл/выкл\", \"type\": \"text\", \"marks\": [{\"type\": \"textStyle\", \"attrs\": {\"color\": \"#2c82c9\"}}]}, {\"to\": 60, \"from\": 59, \"type\": \"hardBreak\"}]}]}, {\"to\": 973, \"from\": 473, \"type\": \"listItem\", \"content\": [{\"to\": 548, \"from\": 473, \"type\": \"paragraph\", \"attrs\": {\"id\": \"190bdcf2-358c-4a52-b0ff-d8c0ee3a20a1\", \"textAlign\": \"left\"}, \"content\": [{\"to\": 515, \"from\": 474, \"text\": \"INDICATOR_HEALTHCHECK_DATABASE_REQUIRED: \", \"type\": \"text\"}, {\"to\": 520, \"from\": 516, \"text\": \"true\", \"type\": \"text\", \"marks\": [{\"type\": \"bold\"}]}, {\"to\": 522, \"from\": 521, \"type\": \"hardBreak\"}, {\"to\": 545, \"from\": 523, \"text\": \"критично / не критично\", \"type\": \"text\", \"marks\": [{\"type\": \"textStyle\", \"attrs\": {\"color\": \"#2c82c9\"}}]}, {\"to\": 547, \"from\": 546, \"type\": \"hardBreak\"}]}]}, {\"to\": 1476, \"from\": 974, \"type\": \"listItem\", \"content\": [{\"to\": 1041, \"from\": 974, \"type\": \"paragraph\", \"attrs\": {\"id\": \"c12f3665-1dd6-41b4-8298-ae48e31d802a\", \"textAlign\": \"left\"}, \"content\": [{\"to\": 1017, \"from\": 975, \"text\": \"INDICATOR_HEALTHCHECK_DATABASE_MAX_ERRORS:\", \"type\": \"text\"}, {\"to\": 1020, \"from\": 1018, \"text\": \"20\", \"type\": \"text\", \"marks\": [{\"type\": \"bold\"}]}, {\"to\": 1022, \"from\": 1021, \"type\": \"hardBreak\"}, {\"to\": 1038, \"from\": 1023, \"text\": \"максимум ошибок\", \"type\": \"text\", \"marks\": [{\"type\": \"textStyle\", \"attrs\": {\"color\": \"#2c82c9\"}}]}, {\"to\": 1040, \"from\": 1039, \"type\": \"hardBreak\"}]}]}, {\"to\": 2027, \"from\": 1477, \"type\": \"listItem\", \"content\": [{\"to\": 1590, \"from\": 1477, \"type\": \"paragraph\", \"attrs\": {\"id\": \"62735fdc-6325-42b5-8603-c533d1456e65\", \"textAlign\": \"left\"}, \"content\": [{\"to\": 1530, \"from\": 1478, \"text\": \"INDICATOR_HEALTHCHECK_DATABASE_MAX_UNAVAILABLE_TIME:\", \"type\": \"text\"}, {\"to\": 1533, \"from\": 1531, \"text\": \"60\", \"type\": \"text\", \"marks\": [{\"type\": \"bold\"}]}, {\"to\": 1535, \"from\": 1534, \"type\": \"hardBreak\"}, {\"to\": 1587, \"from\": 1536, \"text\": \"интервал попыток восстановиться после недоступности\", \"type\": \"text\", \"marks\": [{\"type\": \"textStyle\", \"attrs\": {\"color\": \"#2c82c9\"}}]}, {\"to\": 1589, \"from\": 1588, \"type\": \"hardBreak\"}]}]}, {\"to\": 2611, \"from\": 2028, \"type\": \"listItem\", \"content\": [{\"to\": 2109, \"from\": 2028, \"type\": \"paragraph\", \"attrs\": {\"id\": \"cb010f52-cd5c-4f8d-bf74-cb6bada4e8cb\", \"textAlign\": \"left\"}, \"content\": [{\"to\": 2072, \"from\": 2029, \"text\": \"INDICATOR_HEALTHCHECK_DATABASE_CHECK_QUERY:\", \"type\": \"text\"}, {\"to\": 2083, \"from\": 2073, \"text\": \"'SELECT 1'\", \"type\": \"text\", \"marks\": [{\"type\": \"bold\"}]}, {\"to\": 2085, \"from\": 2084, \"type\": \"hardBreak\"}, {\"to\": 2086, \"from\": 2086, \"text\": \"<strong></strong>\", \"type\": \"text\"}, {\"to\": 2106, \"from\": 2087, \"text\": \"селект для проверки\", \"type\": \"text\", \"marks\": [{\"type\": \"textStyle\", \"attrs\": {\"color\": \"#2c82c9\"}}]}, {\"to\": 2108, \"from\": 2107, \"type\": \"hardBreak\"}]}]}, {\"to\": 3134, \"from\": 2612, \"type\": \"listItem\", \"content\": [{\"to\": 2697, \"from\": 2612, \"type\": \"paragraph\", \"attrs\": {\"id\": \"a9a8edf4-6fbd-4b0a-908c-55109341b574\", \"textAlign\": \"left\"}, \"content\": [{\"to\": 2659, \"from\": 2613, \"text\": \"INDICATOR_HEALTHCHECK_DATABASE_CHECK_INTERVAL:\", \"type\": \"text\"}, {\"to\": 2663, \"from\": 2660, \"text\": \"15s\", \"type\": \"text\", \"marks\": [{\"type\": \"bold\"}]}, {\"to\": 2665, \"from\": 2664, \"type\": \"hardBreak\"}, {\"to\": 2694, \"from\": 2666, \"text\": \"интервал отправки запроса ХЧ\", \"type\": \"text\", \"marks\": [{\"type\": \"textStyle\", \"attrs\": {\"color\": \"#2c82c9\"}}]}, {\"to\": 2696, \"from\": 2695, \"type\": \"hardBreak\"}]}]}, {\"to\": 3644, \"from\": 3135, \"type\": \"listItem\", \"content\": [{\"to\": 3207, \"from\": 3135, \"type\": \"paragraph\", \"attrs\": {\"id\": \"ccdbcc05-fe98-417a-bfd2-e2ecff5d8cf5\", \"textAlign\": \"left\"}, \"content\": [{\"to\": 3179, \"from\": 3136, \"text\": \"INDICATOR_HEALTHCHECK_DATABASE_PUBLIC_NAME:\", \"type\": \"text\"}, {\"to\": 3188, \"from\": 3180, \"text\": \"database\", \"type\": \"text\", \"marks\": [{\"type\": \"bold\"}]}, {\"to\": 3190, \"from\": 3189, \"type\": \"hardBreak\"}, {\"to\": 3204, \"from\": 3191, \"text\": \"публичное имя\", \"type\": \"text\", \"marks\": [{\"type\": \"textStyle\", \"attrs\": {\"color\": \"#2c82c9\"}}]}, {\"to\": 3206, \"from\": 3205, \"type\": \"hardBreak\"}]}]}]}]}"
+                },
+                "stepData": {
+                    "text": "{\"to\": 4, \"from\": 0, \"type\": \"doc\", \"content\": [{\"to\": 2, \"from\": 0, \"type\": \"paragraph\", \"attrs\": {\"id\": \"b0a26c05-de0d-44a3-981c-11179c953f38\", \"textAlign\": \"justify\"}}]}"
+                },
+                "stepResult": {
+                    "text": "{\"to\": 4, \"from\": 0, \"type\": \"doc\", \"content\": [{\"to\": 21, \"from\": 0, \"type\": \"paragraph\", \"attrs\": {\"id\": \"d43d76d0-7383-44b2-8fe6-22f298717344\", \"textAlign\": \"left\"}, \"content\": [{\"to\": 20, \"from\": 1, \"text\": \"Настройки совпадают\", \"type\": \"text\"}]}]}"
+                },
+                "callToTestId": null,
+                "stepNumber": 2,
+                "stepType": "step_by_step",
+                "files": null
+            }
+        ]
+    }
+}

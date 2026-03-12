@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import Any, Dict, Optional, Set
+import httpx
 
 from deepagents import create_deep_agent
 from langgraph.types import Command
@@ -97,6 +98,7 @@ def build_hub_model(model_name: str) -> ChatOpenAI:
         base_url=base_url,
         api_key=api_key,
         timeout=600,
+        http_client=httpx.Client(verify=False),
     )
 
 

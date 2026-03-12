@@ -25,6 +25,7 @@ from src.config import (
     get_gigachat_verify_ssl,
     get_hub_api_key,
     get_hub_base_url,
+    get_hub_verify_ssl,
     get_model_name,
     get_postgres_checkpoint_url,
     get_postgres_store_url,
@@ -93,12 +94,14 @@ def build_hub_model(model_name: str) -> ChatOpenAI:
     """
     base_url = get_hub_base_url()
     api_key = get_hub_api_key()
+    verify = get_hub_verify_ssl()
+    http_client = httpx.Client(verify=verify, timeout=600)
     return ChatOpenAI(
         model=model_name,
         base_url=base_url,
         api_key=api_key,
+        http_client=http_client,
         timeout=600,
-        http_client=httpx.Client(verify=False),
     )
 
 

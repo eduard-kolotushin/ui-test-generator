@@ -144,6 +144,15 @@ def get_hub_api_key() -> str:
     return os.getenv("HUB_API_KEY", "sk-local")
 
 
+def get_hub_verify_ssl() -> bool:
+    """
+    Control SSL certificate verification for HUB (OpenAI-compatible) models.
+
+    Uses the `HUB_VERIFY_SSL` env var (true/false). Defaults to True.
+    """
+    return _get_bool_env("HUB_VERIFY_SSL", default=True)
+
+
 def get_runs_dir() -> str:
     """
     Default output directory for single-run artifacts (plan, created_tests, failure_reason).

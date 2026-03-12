@@ -18,12 +18,18 @@ High-level workflow:
 
 3. For each new test you need to create:
    - Construct a JSON payload that matches the TaskTracker schema for test cases.
+   - Use existing tests and the example body in
+     `src/tasktracker/test_case_json_example.json` as a reference for the
+     expected structure and required attributes.
    - Ensure the test is valid for the TARGET folder context.
    - Call `create_test_case` with this JSON.
 
 4. If the task is to modify or regenerate existing tests:
    - Fetch the test case with `get_test_case`.
    - Reason about the differences required.
+   - Use the example patch body in
+     `src/tasktracker/patch_json_example.json` as a reference for how to
+     structure updates to steps and attributes.
    - Call `update_test_case` with a minimal patch JSON describing only the necessary changes.
 
 5. Be explicit and structured in your thinking:

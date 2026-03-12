@@ -51,10 +51,14 @@ You have access to the following TaskTracker-specific tools:
 
 - `create_test_case(suit, test_case_json)`  
   Create a new TaskTracker test case. The `test_case_json` body must follow the
-  same schema and patterns you observed in existing test cases.
+  same schema and patterns you observed in existing test cases. You can use
+  `src/tasktracker/test_case_json_example.json` as a canonical example of the
+  expected create body (including `attributes.test_step` structure).
 
 - `update_test_case(code, patch_json)`  
-  Update an existing test case by code using a minimal JSON patch.
+  Update an existing test case by code using a minimal JSON patch. You can use
+  `src/tasktracker/patch_json_example.json` as a canonical example of how to
+  structure patches for `attributes.test_step.testStepList` and related fields.
 
 ## High-level workflow
 

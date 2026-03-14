@@ -15,6 +15,7 @@ from src.mcp.tasktracker_client_tools import (
     GetRootFolderUnitsInput,
     GetSingleTestCaseInput,
     GetTestCasesInput,
+    UpdateTestCaseFromStepsInput,
     UpdateTestCaseInput,
     create_folder_tool,
     create_test_case_from_steps_tool,
@@ -22,6 +23,7 @@ from src.mcp.tasktracker_client_tools import (
     get_root_folder_units_tool,
     get_single_test_case_tool,
     get_test_cases_tool,
+    update_test_case_from_steps_tool,
     update_test_case_tool,
 )
 
@@ -35,6 +37,7 @@ __all__ = [
     "GetRootFolderUnitsInput",
     "GetSingleTestCaseInput",
     "GetTestCasesInput",
+    "UpdateTestCaseFromStepsInput",
     "UpdateTestCaseInput",
     "TestStepSpec",
     "create_folder_tool",
@@ -43,6 +46,7 @@ __all__ = [
     "get_root_folder_units_tool",
     "get_single_test_case_tool",
     "get_test_cases_tool",
+    "update_test_case_from_steps_tool",
     "update_test_case_tool",
 ]
 

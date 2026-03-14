@@ -148,6 +148,21 @@ class UpdateTestCaseInput(BaseModel):
     )
 
 
+class UpdateTestCaseFromStepsInput(BaseModel):
+    code: str = Field(
+        ...,
+        description="Code of the existing TaskTracker test case to update, e.g. `PVM-123`.",
+    )
+    steps: List[TestStepSpec] = Field(
+        ...,
+        description=(
+            "Ordered list of test steps to set for this test case. "
+            "Each item has step_description, step_data (optional), step_result. "
+            "The tool builds the correct patch body and calls the API."
+        ),
+    )
+
+
 class GetSingleTestCaseInput(BaseModel):
     code: str = Field(
         ...,
@@ -191,6 +206,16 @@ def _create_test_case_from_steps(**kwargs: Any) -> Any:
 
 def _update_test_case(**kwargs: Any) -> Any:
     return _call_mcp_sync("update_test_case", kwargs)
+
+
+def _update_test_case_from_steps(**kwargs: Any) -> Any:
+    args = dict(kwargs)
+    if "steps" in args and args["steps"]:
+        args["steps"] = [
+            s.model_dump() if hasattr(s, "model_dump") else s
+            for s in args["steps"]
+        ]
+    return _call_mcp_sync("update_test_case_from_steps", args)
 
 
 # --- LangChain StructuredTools ---
@@ -273,8 +298,22 @@ def update_test_case_tool() -> StructuredTool:
     return StructuredTool.from_function(
         name="update_test_case",
         description=(
-            "Update an existing TaskTracker test case by code using a JSON patch body."
+            "Low-level: update an existing TaskTracker test case by code using a JSON patch body. "
+            "Prefer update_test_case_from_steps when only changing steps."
         ),
         func=_update_test_case,
         args_schema=UpdateTestCaseInput,
+    )
+
+
+def update_test_case_from_steps_tool() -> StructuredTool:
+    return StructuredTool.from_function(
+        name="update_test_case_from_steps",
+        description=(
+            "Update an existing test case's steps by code. Provide the test case code and "
+            "an ordered list of steps (step_description, step_data, step_result). "
+            "The tool builds the correct patch body and calls the API."
+        ),
+        func=_update_test_case_from_steps,
+        args_schema=UpdateTestCaseFromStepsInput,
     )

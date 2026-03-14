@@ -19,6 +19,7 @@ from src.mcp.tasktracker_client_tools import (
     get_root_folder_units_tool,
     get_single_test_case_tool,
     get_test_cases_tool,
+    update_test_case_from_steps_tool,
     update_test_case_tool,
 )
 from src.config import (
@@ -184,6 +185,7 @@ def build_agent() -> Any:
         get_single_test_case_tool(),
         # Prefer high-level creation tool that builds attributes.test_step
         create_test_case_from_steps_tool(),
+        update_test_case_from_steps_tool(),
         # Keep low-level tool available for advanced cases
         create_test_case_tool(),
         update_test_case_tool(),
@@ -210,6 +212,7 @@ def build_agent() -> Any:
             "create_test_case": True,
             "create_test_case_from_steps": True,
             "update_test_case": True,
+            "update_test_case_from_steps": True,
         },
     )
     return agent

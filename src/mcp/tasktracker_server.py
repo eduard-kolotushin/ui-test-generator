@@ -11,7 +11,10 @@ from typing import Any
 
 from fastmcp import FastMCP
 
-from src.tasktracker.steps import create_test_case_from_steps as steps_create
+from src.tasktracker.steps import (
+    create_test_case_from_steps as steps_create,
+    update_test_case_from_steps as steps_update_from_steps,
+)
 from src.tasktracker.tools import (
     create_folder as tt_create_folder,
     create_test_case as tt_create_test_case,
@@ -136,6 +139,17 @@ def update_test_case(code: str, patch_json: dict[str, Any]) -> dict[str, Any]:
         code=code,
         patch_json=patch_json,
     )
+    return _serialize_result(result)
+
+
+@mcp.tool()
+def update_test_case_from_steps(code: str, steps: list[dict[str, Any]]) -> dict[str, Any]:
+    """
+    Update an existing test case's steps by code. Provide an ordered list of steps;
+    each step is an object with step_description, step_data (optional), step_result.
+    The tool builds the correct patch body and calls the API.
+    """
+    result = steps_update_from_steps(code=code, steps=steps)
     return _serialize_result(result)
 
 

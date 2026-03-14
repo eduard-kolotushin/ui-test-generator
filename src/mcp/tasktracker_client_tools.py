@@ -1,0 +1,280 @@
+"""
+LangChain StructuredTools that call the TaskTracker MCP server in-process.
+
+Used by the Deep Agent so all TaskTracker access goes through the same MCP
+tool implementations (single authoritative path). The MCP server instance
+is imported and call_tool() is invoked with the same argument schemas
+the agent expects.
+"""
+from __future__ import annotations
+
+import asyncio
+import json
+from typing import Any, Dict, List
+
+from langchain_core.tools import StructuredTool
+from pydantic import BaseModel, Field
+
+from src.tasktracker.steps import TestStepSpec
+
+
+def _get_mcp():
+    """Lazy import to avoid loading FastMCP and tasktracker deps at module level."""
+    from src.mcp.tasktracker_server import mcp
+    return mcp
+
+
+def _tool_result_to_python(result: Any) -> Any:
+    """Extract Python value from FastMCP ToolResult (content or structured_content)."""
+    if result is None:
+        return None
+    if hasattr(result, "structured_content") and result.structured_content is not None:
+        return result.structured_content
+    if hasattr(result, "content") and result.content:
+        first = result.content[0]
+        if hasattr(first, "text"):
+            try:
+                return json.loads(first.text)
+            except (json.JSONDecodeError, TypeError):
+                return first.text
+    return result
+
+
+def _call_mcp_sync(name: str, arguments: Dict[str, Any]) -> Any:
+    """Call MCP tool by name with given arguments; run async call_tool from sync context."""
+    mcp = _get_mcp()
+
+    async def _run() -> Any:
+        tr = await mcp.call_tool(name, arguments)
+        return _tool_result_to_python(tr)
+
+    try:
+        loop = asyncio.get_running_loop()
+    except RuntimeError:
+        loop = None
+    if loop is not None:
+        import concurrent.futures
+        with concurrent.futures.ThreadPoolExecutor() as pool:
+            future = pool.submit(asyncio.run, _run())
+            return future.result()
+    return asyncio.run(_run())
+
+
+# --- Input schemas (same as agent/tools.py for compatibility) ---
+
+
+class GetRootFolderUnitsInput(BaseModel):
+    space_id_code: str = Field(
+        "PVM",
+        description="Space ID code for the root folder (e.g. VIEW, PVM).",
+    )
+    page: int = Field(0, description="Page number (0-based).", ge=0)
+    size: int = Field(50, description="Page size.", ge=1, le=500)
+
+
+class CreateFolderInput(BaseModel):
+    name: str = Field(..., description="Name of the new folder.")
+    parent_id_code: str = Field(
+        ...,
+        description=(
+            "Code of the parent folder (e.g. TMS_test_case for root, or a child folder code)."
+        ),
+    )
+    space_id_code: str = Field(
+        "PVM",
+        description="Space ID code (e.g. VIEW, PVM).",
+    )
+
+
+class GetTestCasesInput(BaseModel):
+    folder_code: str = Field(
+        ...,
+        description=(
+            "Code of the TaskTracker folder that contains test cases, "
+            "for example `TMS_test_case` or a nested folder code."
+        ),
+    )
+    page: int = Field(0, description="Page number to fetch (0-based).", ge=0)
+    size: int = Field(50, description="Page size (number of test cases to fetch).", ge=1, le=500)
+
+
+class CreateTestCaseInput(BaseModel):
+    suit: str = Field(
+        "test_case",
+        description="TaskTracker suit code for test cases (usually `test_case`).",
+    )
+    test_case_json: Dict[str, Any] = Field(
+        ...,
+        description=(
+            "Raw JSON payload for the new test case, matching TaskTracker's API schema. "
+            "The agent should base this on existing test cases from `get_test_cases`."
+        ),
+    )
+
+
+class CreateTestCaseFromStepsInput(BaseModel):
+    suit: str = Field(
+        "test_case",
+        description="TaskTracker suit code for test cases (usually `test_case`).",
+    )
+    test_case_base: Dict[str, Any] = Field(
+        ...,
+        description=(
+            "Base JSON payload for the new test case (summary, attributes, etc.), "
+            "WITHOUT the `attributes.test_step` field. "
+            "This should typically be copied or adapted from an existing test case."
+        ),
+    )
+    steps: List[TestStepSpec] = Field(
+        ...,
+        description=(
+            "Ordered list of test steps. Each item corresponds to one step and "
+            "contains: (step_description, step_data, step_result)."
+        ),
+    )
+
+
+class UpdateTestCaseInput(BaseModel):
+    code: str = Field(
+        ...,
+        description="Code of the existing TaskTracker test case to update, e.g. `PVM-123`.",
+    )
+    patch_json: Dict[str, Any] = Field(
+        ...,
+        description=(
+            "Partial JSON payload for the update request, matching the TaskTracker "
+            "update schema (fields to change only)."
+        ),
+    )
+
+
+class GetSingleTestCaseInput(BaseModel):
+    code: str = Field(
+        ...,
+        description="Code of the TaskTracker test case to fetch, e.g. `PVM-123`.",
+    )
+
+
+# --- Tool implementations that delegate to MCP ---
+
+
+def _get_root_folder_units(**kwargs: Any) -> Any:
+    return _call_mcp_sync("get_root_folder_units", kwargs)
+
+
+def _create_folder(**kwargs: Any) -> Any:
+    return _call_mcp_sync("create_folder", kwargs)
+
+
+def _get_test_cases(**kwargs: Any) -> Any:
+    return _call_mcp_sync("get_test_cases", kwargs)
+
+
+def _get_test_case(**kwargs: Any) -> Any:
+    return _call_mcp_sync("get_test_case", kwargs)
+
+
+def _create_test_case(**kwargs: Any) -> Any:
+    return _call_mcp_sync("create_test_case", kwargs)
+
+
+def _create_test_case_from_steps(**kwargs: Any) -> Any:
+    # Convert steps (List[TestStepSpec]) to list of dicts for MCP
+    args = dict(kwargs)
+    if "steps" in args and args["steps"]:
+        args["steps"] = [
+            s.model_dump() if hasattr(s, "model_dump") else s
+            for s in args["steps"]
+        ]
+    return _call_mcp_sync("create_test_case_from_steps", args)
+
+
+def _update_test_case(**kwargs: Any) -> Any:
+    return _call_mcp_sync("update_test_case", kwargs)
+
+
+# --- LangChain StructuredTools ---
+
+
+def get_root_folder_units_tool() -> StructuredTool:
+    return StructuredTool.from_function(
+        name="get_root_folder_units",
+        description=(
+            "Get the root folder hierarchy and paginated units (test cases) from the root. "
+            "Use this to discover folder structure and root-level test cases."
+        ),
+        func=_get_root_folder_units,
+        args_schema=GetRootFolderUnitsInput,
+    )
+
+
+def create_folder_tool() -> StructuredTool:
+    return StructuredTool.from_function(
+        name="create_folder",
+        description=(
+            "Create a new TaskTracker folder under the given parent. "
+            "Use get_root_folder_units to discover parent folder codes."
+        ),
+        func=_create_folder,
+        args_schema=CreateFolderInput,
+    )
+
+
+def get_test_cases_tool() -> StructuredTool:
+    return StructuredTool.from_function(
+        name="get_test_cases",
+        description=(
+            "List TaskTracker test cases in the given folder. "
+            "Use this to read existing tests to use as templates for new ones."
+        ),
+        func=_get_test_cases,
+        args_schema=GetTestCasesInput,
+    )
+
+
+def get_single_test_case_tool() -> StructuredTool:
+    return StructuredTool.from_function(
+        name="get_test_case",
+        description="Fetch a single TaskTracker test case by code.",
+        func=_get_test_case,
+        args_schema=GetSingleTestCaseInput,
+    )
+
+
+def create_test_case_tool() -> StructuredTool:
+    return StructuredTool.from_function(
+        name="create_test_case",
+        description=(
+            "Low-level TaskTracker test creation tool. "
+            "Takes a full `test_case_json` payload that already matches the API schema. "
+            "Prefer `create_test_case_from_steps` for normal usage."
+        ),
+        func=_create_test_case,
+        args_schema=CreateTestCaseInput,
+    )
+
+
+def create_test_case_from_steps_tool() -> StructuredTool:
+    return StructuredTool.from_function(
+        name="create_test_case_from_steps",
+        description=(
+            "Create a new TaskTracker test case from a simple list of steps. "
+            "You provide a base JSON payload (without `attributes.test_step`) and "
+            "an ordered list of step triples: (step_description, step_data, step_result). "
+            "The tool builds the nested `attributes.test_step` structure and calls "
+            "the TaskTracker API."
+        ),
+        func=_create_test_case_from_steps,
+        args_schema=CreateTestCaseFromStepsInput,
+    )
+
+
+def update_test_case_tool() -> StructuredTool:
+    return StructuredTool.from_function(
+        name="update_test_case",
+        description=(
+            "Update an existing TaskTracker test case by code using a JSON patch body."
+        ),
+        func=_update_test_case,
+        args_schema=UpdateTestCaseInput,
+    )

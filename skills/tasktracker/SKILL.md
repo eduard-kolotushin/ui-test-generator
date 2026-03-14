@@ -28,6 +28,8 @@ Use this skill whenever the user asks you to:
 
 ## Available tools
 
+These tools are implemented by the **TaskTracker MCP server** (`src.mcp.tasktracker_server`) and are used by the Deep Agent via `src.mcp.tasktracker_client_tools`. They can also be used directly from Cursor when the MCP server is configured.
+
 You have access to the following TaskTracker-specific tools:
 
 **Folders (TMS plugin)**

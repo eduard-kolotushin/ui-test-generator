@@ -12,7 +12,7 @@ from langgraph.checkpoint.memory import InMemorySaver
 from langgraph.store.memory import InMemoryStore
 
 from src.agent.prompts import SYSTEM_PROMPT
-from src.agent.tools import (
+from src.mcp.tasktracker_client_tools import (
     create_folder_tool,
     create_test_case_from_steps_tool,
     create_test_case_tool,

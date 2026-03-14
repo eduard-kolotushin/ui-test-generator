@@ -49,11 +49,17 @@ You have access to the following TaskTracker-specific tools:
 - `get_test_case(code)`  
   Fetch a single test case by its code (for detailed inspection or updates).
 
+- `create_test_case_from_steps(suit, test_case_base, steps)`  
+  Preferred high-level tool for creating new TaskTracker test cases. You provide
+  a base JSON payload (summary, attributes, etc.) without `attributes.test_step`
+  and an ordered list of step triples
+  `[(step_description_1, step_data_1, step_result_1), ...]`. The tool builds the
+  correct `attributes.test_step` structure for you and calls the API.
+
 - `create_test_case(suit, test_case_json)`  
-  Create a new TaskTracker test case. The `test_case_json` body must follow the
-  same schema and patterns you observed in existing test cases. You can use
-  `src/tasktracker/test_case_json_example.json` as a canonical example of the
-  expected create body (including `attributes.test_step` structure).
+  Low-level test creation tool. The `test_case_json` body must already follow the
+  TaskTracker schema. You can use `src/tasktracker/test_case_json_example.json` as
+  a canonical example of the expected create body (including `attributes.test_step`).
 
 - `update_test_case(code, patch_json)`  
   Update an existing test case by code using a minimal JSON patch. You can use

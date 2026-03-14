@@ -2,6 +2,10 @@ from __future__ import annotations
 
 from typing import Any, Dict, List
 
+import json
+from copy import deepcopy
+from uuid import uuid4
+
 from langchain_core.tools import StructuredTool
 from pydantic import BaseModel, Field
 
@@ -119,15 +123,140 @@ class CreateTestCaseInput(BaseModel):
 
 
 def create_test_case_tool() -> StructuredTool:
-    """Deep Agents / LangChain tool for creating a new test case."""
+    """Low-level tool: create a new test case from a full JSON body."""
     return StructuredTool.from_function(
         name="create_test_case",
         description=(
-            "Create a new TaskTracker test case using the provided JSON payload. "
-            "You must supply all required attributes according to the TaskTracker schema."
+            "Low-level TaskTracker test creation tool. "
+            "Takes a full `test_case_json` payload that already matches the API schema. "
+            "Prefer `create_test_case_from_steps` for normal usage."
         ),
         func=create_test_case,
         args_schema=CreateTestCaseInput,
+    )
+
+
+class TestStepSpec(BaseModel):
+    """
+    High-level representation of a single test step.
+
+    The tool will convert these fields into the nested `attributes.test_step`
+    structure expected by TaskTracker (with formattedText JSON, step numbers, etc.).
+    """
+
+    step_description: str = Field(
+        ...,
+        description="Human-readable description of the step (what the user does).",
+    )
+    step_data: str = Field(
+        "",
+        description="Optional data / input used in this step (can be empty string).",
+    )
+    step_result: str = Field(
+        ...,
+        description="Expected result / assertion for this step.",
+    )
+
+
+class CreateTestCaseFromStepsInput(BaseModel):
+    suit: str = Field(
+        "test_case",
+        description="TaskTracker suit code for test cases (usually `test_case`).",
+    )
+    test_case_base: Dict[str, Any] = Field(
+        ...,
+        description=(
+            "Base JSON payload for the new test case (summary, attributes, etc.), "
+            "WITHOUT the `attributes.test_step` field. "
+            "This should typically be copied or adapted from an existing test case."
+        ),
+    )
+    steps: List[TestStepSpec] = Field(
+        ...,
+        description=(
+            "Ordered list of test steps. Each item corresponds to one step and "
+            "contains: (step_description, step_data, step_result)."
+        ),
+    )
+
+
+def _build_formatted_text(text: str) -> str:
+    """
+    Wrap plain text into a minimal ProseMirror-like JSON document and dump as string.
+    """
+    doc = {
+        "type": "doc",
+        "content": [
+            {
+                "type": "paragraph",
+                "content": [{"type": "text", "text": text}],
+            }
+        ],
+    }
+    return json.dumps(doc, ensure_ascii=False)
+
+
+def _build_test_steps(steps: List[TestStepSpec]) -> List[Dict[str, Any]]:
+    result: List[Dict[str, Any]] = []
+    for idx, step in enumerate(steps, start=1):
+        result.append(
+            {
+                "code": str(uuid4()),
+                "stepDescription": {
+                    "text": _build_formatted_text(step.step_description),
+                },
+                "stepData": {
+                    "text": _build_formatted_text(step.step_data or ""),
+                },
+                "stepResult": {
+                    "text": _build_formatted_text(step.step_result),
+                },
+                "callToTestId": None,
+                "stepNumber": idx,
+                "stepType": "step_by_step",
+                "files": None,
+            }
+        )
+    return result
+
+
+def create_test_case_from_steps(
+    suit: str,
+    test_case_base: Dict[str, Any],
+    steps: List[TestStepSpec],
+) -> Dict[str, Any]:
+    """
+    High-level helper: create a new test case from a list of steps.
+
+    Instead of asking the LLM to construct the entire nested `attributes.test_step`
+    structure, this tool accepts a simple ordered list of steps (description, data,
+    result) and builds a valid TaskTracker payload before calling the API.
+    """
+    payload = deepcopy(test_case_base)
+    attributes = payload.setdefault("attributes", {})
+    attributes["test_step"] = _build_test_steps(steps)
+    return create_test_case(suit=suit, test_case_json=payload)
+
+
+def create_test_case_from_steps_tool() -> StructuredTool:
+    """
+    Preferred high-level tool for creating a new TaskTracker test case.
+
+    Provide a `test_case_base` (copied/adapted from an existing test) and a list
+    of steps in the form [(step_description, step_data, step_result), ...]. The
+    tool will construct the correct `attributes.test_step` structure for you.
+    """
+    return StructuredTool.from_function(
+        name="create_test_case_from_steps",
+        description=(
+            "Create a new TaskTracker test case from a simple list of steps. "
+            "You provide a base JSON payload (without `attributes.test_step`) and "
+            "an ordered list of step triples: (step_description, step_data, step_result). "
+            "The tool builds the nested `attributes.test_step` structure and calls "
+            "the TaskTracker API."
+        ),
+        func=create_test_case_from_steps,
+        args_schema=CreateTestCaseFromStepsInput,
     )
 
 

@@ -1,4 +1,4 @@
-/15/26 22:04:31] Error validating tool 'create_test_case'
+[03/15/26 22:16:04] Error validating tool 'create_test_case'
                     ╭────────────────────────────────────────────────────────────────────────── Traceback (most recent call last) ───────────────────────────────────────────────────────────────────────────╮
                     │ /Users/kolotushin.e.v/IdeaProjects/ui-test-generator/.venv/lib/python3.13/site-packages/fastmcp/server/server.py:987 in call_tool                                                      │
                     │                                                                                                                                                                                        │
@@ -18,13 +18,34 @@
                     │                                                                                                                                                                                        │
                     │ /Users/kolotushin.e.v/IdeaProjects/ui-test-generator/.venv/lib/python3.13/site-packages/pydantic/type_adapter.py:441 in validate_python                                                │
                     ╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
-                    ValidationError: 3 validation errors for call[create_test_case]
+                    ValidationError: 10 validation errors for call[create_test_case]
                     steps.0
-                      Input should be a valid dictionary [type=dict_type, input_value=TestStepSpec(step_descrip...t healthcheck settings'), input_type=TestStepSpec]
+                      Input should be a valid dictionary [type=dict_type, input_value=TestStepSpec(step_descrip...и для HealthCheck'), input_type=TestStepSpec]
                         For further information visit https://errors.pydantic.dev/2.12/v/dict_type
                     steps.1
-                      Input should be a valid dictionary [type=dict_type, input_value=TestStepSpec(step_descrip...s for all dependencies'), input_type=TestStepSpec]
+                      Input should be a valid dictionary [type=dict_type, input_value=TestStepSpec(step_descrip...ии с required=true'), input_type=TestStepSpec]
                         For further information visit https://errors.pydantic.dev/2.12/v/dict_type
                     steps.2
-                      Input should be a valid dictionary [type=dict_type, input_value=TestStepSpec(step_descrip... code 200 with no body'), input_type=TestStepSpec]
+                      Input should be a valid dictionary [type=dict_type, input_value=TestStepSpec(step_descrip...ависимостей'), input_type=TestStepSpec]
+                        For further information visit https://errors.pydantic.dev/2.12/v/dict_type
+                    steps.3
+                      Input should be a valid dictionary [type=dict_type, input_value=TestStepSpec(step_descrip... FAIL для database'), input_type=TestStepSpec]
+                        For further information visit https://errors.pydantic.dev/2.12/v/dict_type
+                    steps.4
+                      Input should be a valid dictionary [type=dict_type, input_value=TestStepSpec(step_descrip...алансировки'), input_type=TestStepSpec]
+                        For further information visit https://errors.pydantic.dev/2.12/v/dict_type
+                    steps.5
+                      Input should be a valid dictionary [type=dict_type, input_value=TestStepSpec(step_descrip...ависимостей'), input_type=TestStepSpec]
+                        For further information visit https://errors.pydantic.dev/2.12/v/dict_type
+                    steps.6
+                      Input should be a valid dictionary [type=dict_type, input_value=TestStepSpec(step_descrip...ависимостей'), input_type=TestStepSpec]
+                        For further information visit https://errors.pydantic.dev/2.12/v/dict_type
+                    steps.7
+                      Input should be a valid dictionary [type=dict_type, input_value=TestStepSpec(step_descrip...алансировку'), input_type=TestStepSpec]
+                        For further information visit https://errors.pydantic.dev/2.12/v/dict_type
+                    steps.8
+                      Input should be a valid dictionary [type=dict_type, input_value=TestStepSpec(step_descrip...онном файле'), input_type=TestStepSpec]
+                        For further information visit https://errors.pydantic.dev/2.12/v/dict_type
+                    steps.9
+                      Input should be a valid dictionary [type=dict_type, input_value=TestStepSpec(step_descrip...екорректном'), input_type=TestStepSpec]
                         For further information visit https://errors.pydantic.dev/2.12/v/dict_type

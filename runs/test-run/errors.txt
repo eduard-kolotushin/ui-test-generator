@@ -1,0 +1,30 @@
+/15/26 22:04:31] Error validating tool 'create_test_case'
+                    ╭────────────────────────────────────────────────────────────────────────── Traceback (most recent call last) ───────────────────────────────────────────────────────────────────────────╮
+                    │ /Users/kolotushin.e.v/IdeaProjects/ui-test-generator/.venv/lib/python3.13/site-packages/fastmcp/server/server.py:987 in call_tool                                                      │
+                    │                                                                                                                                                                                        │
+                    │ /Users/kolotushin.e.v/IdeaProjects/ui-test-generator/.venv/lib/python3.13/site-packages/fastmcp/tools/tool.py:354 in _run                                                              │
+                    │                                                                                                                                                                                        │
+                    │                                                                                ... 4 frames hidden ...                                                                                 │
+                    │                                                                                                                                                                                        │
+                    │ /Users/kolotushin.e.v/IdeaProjects/ui-test-generator/.venv/lib/python3.13/site-packages/anyio/_backends/_asyncio.py:986 in run                                                         │
+                    │                                                                                                                                                                                        │
+                    │    983 │   │   │   │   │   exception: BaseException | None = None                                                                                                                      │
+                    │    984 │   │   │   │   │   threadlocals.current_cancel_scope = cancel_scope                                                                                                            │
+                    │    985 │   │   │   │   │   try:                                                                                                                                                        │
+                    │ ❱  986 │   │   │   │   │   │   result = context.run(func, *args)                                                                                                                       │
+                    │    987 │   │   │   │   │   except BaseException as exc:                                                                                                                                │
+                    │    988 │   │   │   │   │   │   exception = exc                                                                                                                                         │
+                    │    989 │   │   │   │   │   finally:                                                                                                                                                    │
+                    │                                                                                                                                                                                        │
+                    │ /Users/kolotushin.e.v/IdeaProjects/ui-test-generator/.venv/lib/python3.13/site-packages/pydantic/type_adapter.py:441 in validate_python                                                │
+                    ╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+                    ValidationError: 3 validation errors for call[create_test_case]
+                    steps.0
+                      Input should be a valid dictionary [type=dict_type, input_value=TestStepSpec(step_descrip...t healthcheck settings'), input_type=TestStepSpec]
+                        For further information visit https://errors.pydantic.dev/2.12/v/dict_type
+                    steps.1
+                      Input should be a valid dictionary [type=dict_type, input_value=TestStepSpec(step_descrip...s for all dependencies'), input_type=TestStepSpec]
+                        For further information visit https://errors.pydantic.dev/2.12/v/dict_type
+                    steps.2
+                      Input should be a valid dictionary [type=dict_type, input_value=TestStepSpec(step_descrip... code 200 with no body'), input_type=TestStepSpec]
+                        For further information visit https://errors.pydantic.dev/2.12/v/dict_type

@@ -13,9 +13,24 @@ import json
 from typing import Any, Dict, List
 
 from langchain_core.tools import StructuredTool
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 from src.tasktracker.steps import TestStepSpec
+
+
+def _steps_from_string_or_list(v: Any) -> Any:
+    """Coerce steps to a list; LLMs sometimes pass a JSON string instead of a list."""
+    if isinstance(v, str):
+        s = v.strip()
+        if not s:
+            return []
+        try:
+            parsed = json.loads(s)
+            if isinstance(parsed, list):
+                return parsed
+        except (json.JSONDecodeError, TypeError):
+            pass
+    return v
 
 
 def _get_mcp():
@@ -124,6 +139,11 @@ class CreateTestCaseInput(BaseModel):
         ),
     )
 
+    @field_validator("steps", mode="before")
+    @classmethod
+    def _coerce_steps(cls, v: Any) -> Any:
+        return _steps_from_string_or_list(v)
+
 
 class CreateTestCaseFromStepsInput(BaseModel):
     suit: str = Field(
@@ -146,6 +166,11 @@ class CreateTestCaseFromStepsInput(BaseModel):
         ),
     )
 
+    @field_validator("steps", mode="before")
+    @classmethod
+    def _coerce_steps(cls, v: Any) -> Any:
+        return _steps_from_string_or_list(v)
+
 
 class UpdateTestCaseInput(BaseModel):
     code: str = Field(
@@ -160,6 +185,11 @@ class UpdateTestCaseInput(BaseModel):
             "The tool builds the correct patch body and calls the API."
         ),
     )
+
+    @field_validator("steps", mode="before")
+    @classmethod
+    def _coerce_steps(cls, v: Any) -> Any:
+        return _steps_from_string_or_list(v)
 
 
 class GetSingleTestCaseInput(BaseModel):

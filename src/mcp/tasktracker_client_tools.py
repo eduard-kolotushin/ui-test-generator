@@ -119,7 +119,7 @@ class CreateTestCaseInput(BaseModel):
         ...,
         description=(
             "Ordered list of test steps. Each item corresponds to one step and "
-            "contains: (step_description, step_data, step_result). "
+            "contains following kyes: step_description, step_data, step_result. "
             "Pass an empty list if the test should have no steps."
         ),
     )

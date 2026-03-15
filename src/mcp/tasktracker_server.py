@@ -116,7 +116,7 @@ def create_test_case(
     - `suit`: TaskTracker suit code (usually `test_case`).
     - `space`: TaskTracker space code (e.g. `PVM`, `VIEW`).
     - `folder_code`: TaskTracker folder identifier to place the test in.
-    - `steps`: ordered list of steps, each with step_description, step_data (optional), step_result.
+    - `steps`: ordered list of steps (JSON array of objects → list[dict] here), each with step_description, step_data (optional), step_result.
 
     The tool builds a safe base payload from the canonical example JSON and
     injects the steps; callers cannot pass arbitrary JSON bodies.

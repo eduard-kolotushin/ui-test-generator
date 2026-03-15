@@ -7,9 +7,12 @@ client and config (TASKTRACKER_BASE_URL, auth, TASKTRACKER_DRY_RUN).
 """
 from __future__ import annotations
 
+import logging
 from typing import Any
 
 from fastmcp import FastMCP
+
+log = logging.getLogger(__name__)
 
 from src.tasktracker.steps import (
     TestStepSpec,
@@ -131,6 +134,13 @@ def create_test_case(
     injects the steps; callers cannot pass arbitrary JSON bodies.
     """
     steps_dicts = [_step_item_to_dict(s) for s in (steps or [])]
+    log.info(
+        "create_test_case tool: summary=%s folder_code=%s incoming_steps_len=%s steps_dicts_len=%s",
+        summary,
+        folder_code,
+        len(steps or []),
+        len(steps_dicts),
+    )
     step_specs: list[TestStepSpec] = [
         TestStepSpec(
             step_description=d.get("step_description", ""),
@@ -139,6 +149,7 @@ def create_test_case(
         )
         for d in steps_dicts
     ]
+    log.debug("create_test_case step_specs: %s", [(s.step_description[:50], s.step_result[:50]) for s in step_specs])
     result = create_test_case_with_summary(
         summary=summary,
         suit=suit,
@@ -160,6 +171,12 @@ def update_test_case_from_steps(code: str, steps: list[Any]) -> dict[str, Any]:
     - Calls the TaskTracker update API.
     """
     steps_dicts = [_step_item_to_dict(s) for s in (steps or [])]
+    log.info(
+        "update_test_case_from_steps tool: code=%s incoming_steps_len=%s steps_dicts_len=%s",
+        code,
+        len(steps or []),
+        len(steps_dicts),
+    )
     step_specs: list[TestStepSpec] = [
         TestStepSpec(
             step_description=d.get("step_description", ""),
@@ -168,6 +185,7 @@ def update_test_case_from_steps(code: str, steps: list[Any]) -> dict[str, Any]:
         )
         for d in steps_dicts
     ]
+    log.debug("update_test_case_from_steps step_specs: %s", [(s.step_description[:50], s.step_result[:50]) for s in step_specs])
     result = steps_update_from_steps(code=code, steps=step_specs)
     return _serialize_result(result)
 

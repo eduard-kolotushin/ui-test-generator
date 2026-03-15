@@ -7,6 +7,7 @@ and ProseMirror formatting stay in one place.
 from __future__ import annotations
 
 import json
+import logging
 from copy import deepcopy
 from typing import Any, Dict, List, Union
 from uuid import uuid4
@@ -14,6 +15,8 @@ from uuid import uuid4
 from pydantic import BaseModel, Field
 
 from src.tasktracker.tools import create_test_case, get_test_case, update_test_case
+
+log = logging.getLogger(__name__)
 
 
 class TestStepSpec(BaseModel):
@@ -163,6 +166,13 @@ def create_test_case_from_steps(
     payload = deepcopy(test_case_base)
     attributes = payload.setdefault("attributes", {})
     attributes["test_step"] = build_test_steps(steps)
+    log.info(
+        "create_test_case_from_steps: sending payload summary=%s suit=%s steps_count=%s",
+        payload.get("summary"),
+        suit,
+        len(attributes.get("test_step") or []),
+    )
+    log.debug("create_test_case_from_steps payload body: %s", json.dumps(payload, ensure_ascii=False)[:2000])
     return create_test_case(suit=suit, test_case_json=payload)
 
 
@@ -289,11 +299,18 @@ def update_test_case_from_steps(
     current = get_test_case(code)
     existing_steps = _existing_steps_from_test_case(current or {})
 
+    test_step_list = build_patch_steps(existing_steps, steps)
     patch = {
         "attributes": {
             "test_step": {
-                "testStepList": build_patch_steps(existing_steps, steps),
+                "testStepList": test_step_list,
             }
         }
     }
+    log.info(
+        "update_test_case_from_steps: code=%s testStepList_len=%s",
+        code,
+        len(test_step_list),
+    )
+    log.debug("update_test_case_from_steps patch body: %s", json.dumps(patch, ensure_ascii=False)[:2000])
     return update_test_case(code=code, patch_json=patch)

@@ -1,9 +1,13 @@
 from __future__ import annotations
 
+import json
+import logging
 import os
 from typing import Any, Dict, List
 
 from src.tasktracker.client import TaskTrackerClient, flatten_test_cases
+
+log = logging.getLogger(__name__)
 from src.tasktracker.dry_run_client import DryRunTaskTrackerClient
 
 
@@ -60,6 +64,16 @@ def create_test_case(suit: str, test_case_json: Dict[str, Any]) -> Dict[str, Any
     """
     Low-level API wrapper: create a new test case.
     """
+    attrs = test_case_json.get("attributes") or {}
+    test_step = attrs.get("test_step")
+    step_count = len(test_step) if isinstance(test_step, list) else 0
+    log.info(
+        "create_test_case: suit=%s summary=%s attributes.test_step len=%s",
+        suit,
+        test_case_json.get("summary"),
+        step_count,
+    )
+    log.debug("create_test_case request body: %s", json.dumps(test_case_json, ensure_ascii=False)[:3000])
     client = _get_client()
     return client.create_test_case(suit=suit, payload=test_case_json)
 
@@ -68,6 +82,15 @@ def update_test_case(code: str, patch_json: Dict[str, Any]) -> Dict[str, Any]:
     """
     Low-level API wrapper: update an existing test case by code.
     """
+    test_step = (patch_json.get("attributes") or {}).get("test_step") or {}
+    step_list = test_step.get("testStepList") if isinstance(test_step, dict) else []
+    step_count = len(step_list) if isinstance(step_list, list) else 0
+    log.info(
+        "update_test_case: code=%s attributes.test_step.testStepList len=%s",
+        code,
+        step_count,
+    )
+    log.debug("update_test_case request body: %s", json.dumps(patch_json, ensure_ascii=False)[:3000])
     client = _get_client()
     return client.update_test_case(code=code, patch_body=patch_json)
 

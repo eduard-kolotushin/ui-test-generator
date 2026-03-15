@@ -11,7 +11,10 @@ from __future__ import annotations
 import ast
 import asyncio
 import json
+import logging
 from typing import Any, Dict, List, Union
+
+log = logging.getLogger(__name__)
 
 from langchain_core.tools import StructuredTool
 from pydantic import BaseModel, Field
@@ -255,6 +258,13 @@ def _create_test_case(**kwargs: Any) -> Any:
     args = dict(kwargs)
     if "steps" in args:
         args["steps"] = _normalize_steps_for_mcp(args["steps"])
+    log.info(
+        "create_test_case (to MCP): summary=%s folder_code=%s steps_len=%s",
+        args.get("summary"),
+        args.get("folder_code"),
+        len(args.get("steps") or []),
+    )
+    log.debug("create_test_case (to MCP) steps: %s", json.dumps(args.get("steps"), ensure_ascii=False)[:2000])
     return _call_mcp_sync("create_test_case", args)
 
 
@@ -262,6 +272,7 @@ def _create_test_case_from_steps(**kwargs: Any) -> Any:
     args = dict(kwargs)
     if "steps" in args:
         args["steps"] = _normalize_steps_for_mcp(args["steps"])
+    log.info("create_test_case_from_steps (to MCP): steps_len=%s", len(args.get("steps") or []))
     return _call_mcp_sync("create_test_case_from_steps", args)
 
 
@@ -269,6 +280,12 @@ def _update_test_case_from_steps(**kwargs: Any) -> Any:
     args = dict(kwargs)
     if "steps" in args:
         args["steps"] = _normalize_steps_for_mcp(args["steps"])
+    log.info(
+        "update_test_case_from_steps (to MCP): code=%s steps_len=%s",
+        args.get("code"),
+        len(args.get("steps") or []),
+    )
+    log.debug("update_test_case_from_steps (to MCP) steps: %s", json.dumps(args.get("steps"), ensure_ascii=False)[:2000])
     return _call_mcp_sync("update_test_case_from_steps", args)
 
 

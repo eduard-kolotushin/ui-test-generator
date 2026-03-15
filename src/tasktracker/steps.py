@@ -244,6 +244,34 @@ def build_patch_steps(
     return result
 
 
+def _existing_steps_from_test_case(current: Dict[str, Any]) -> List[Dict[str, Any]]:
+    """
+    Extract the list of existing steps from a get_test_case response.
+
+    get_test_case returns attributes as an array of attribute objects; the one
+    with code "test_step" has value = list of steps (stepDescription.text, etc.).
+    Also supports attributes as a dict with test_step / testStepList for compatibility.
+    """
+    attrs = (current or {}).get("attributes")
+    if attrs is None:
+        return []
+
+    if isinstance(attrs, list):
+        for item in attrs:
+            if isinstance(item, dict) and item.get("code") == "test_step":
+                val = item.get("value")
+                return list(val) if isinstance(val, list) else []
+        return []
+
+    # attributes is a dict (e.g. from patch or legacy response)
+    test_step = attrs.get("test_step") or {}
+    if isinstance(test_step, dict) and "testStepList" in test_step:
+        existing = test_step.get("testStepList") or []
+    else:
+        existing = test_step if isinstance(test_step, list) else []
+    return list(existing)
+
+
 def update_test_case_from_steps(
     code: str,
     steps: List[Union[TestStepSpec, Dict[str, Any]]],
@@ -254,15 +282,12 @@ def update_test_case_from_steps(
     Fetches the current test case to preserve existing step codes, then builds
     the patch body in the shape expected by the TaskTracker update API
     (attributes.test_step.testStepList) and calls update_test_case.
+
+    Supports get_test_case response shape where attributes is an array of
+    attribute objects (see get_test_case_json_example.json).
     """
     current = get_test_case(code)
-    attrs = (current or {}).get("attributes") or {}
-    test_step = attrs.get("test_step") or {}
-    # Support both create-style and update-style layouts, if present.
-    if isinstance(test_step, dict) and "testStepList" in test_step:
-        existing_steps = test_step.get("testStepList") or []
-    else:
-        existing_steps = test_step or []
+    existing_steps = _existing_steps_from_test_case(current or {})
 
     patch = {
         "attributes": {

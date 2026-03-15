@@ -19,7 +19,6 @@ from src.mcp.tasktracker_client_tools import (
     get_root_folder_units_tool,
     get_single_test_case_tool,
     get_test_cases_tool,
-    update_test_case_from_steps_tool,
     update_test_case_tool,
 )
 from src.config import (
@@ -185,10 +184,10 @@ def build_agent() -> Any:
         get_single_test_case_tool(),
         # Prefer high-level creation tool that builds attributes.test_step
         create_test_case_from_steps_tool(),
-        update_test_case_from_steps_tool(),
-        # Keep low-level tool available for advanced cases
-        create_test_case_tool(),
+        # Update existing test case steps (MCP tool name: update_test_case_from_steps)
         update_test_case_tool(),
+        # High-level create from summary + steps
+        create_test_case_tool(),
     ]
 
     model = build_model()

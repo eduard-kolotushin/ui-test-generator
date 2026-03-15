@@ -1,0 +1,626 @@
+{
+    "code": "VIEW-8576",
+    "summary": "[VIEW][HealthCheck] Доступность Audit kafka",
+    "description": null,
+    "isFavorite": false,
+    "createdAt": "2026-03-09T21:46:01.134124Z",
+    "createdBy": {
+        "externalId": "Kolotushin.E.V",
+        "firstName": "Эдуард",
+        "lastName": "Колотушин",
+        "middleName": "Владиславович",
+        "login": "kolotushin.e.v",
+        "userDetails": []
+    },
+    "updatedAt": "2026-03-12T08:17:40.359235Z",
+    "updatedBy": {
+        "externalId": "Zabolotskiy.I.A",
+        "firstName": "Игорь",
+        "lastName": "Заболотский",
+        "middleName": "Александрович",
+        "login": "zabolotskiy.i.a",
+        "userDetails": []
+    },
+    "suit": {
+        "code": "test_case",
+        "name": "Тест-кейс",
+        "icon": "engine"
+    },
+    "space": {
+        "code": "VIEW",
+        "name": "Platform V View"
+    },
+    "attributes": [
+        {
+            "code": "estimate",
+            "name": "Трудозатраты",
+            "type": "non_negative_int",
+            "value": null,
+            "valueAsString": "",
+            "parameters": {
+                "ORDER": 2
+            }
+        },
+        {
+            "code": "owner",
+            "name": "Владелец",
+            "type": "user",
+            "value": null,
+            "valueAsString": "",
+            "parameters": {
+                "ORDER": 5
+            }
+        },
+        {
+            "code": "type_of_testing",
+            "name": "Вид тестирования",
+            "type": "taxonomy",
+            "value": {
+                "code": "regress",
+                "name": "Регресс"
+            },
+            "valueAsString": "",
+            "parameters": {
+                "ORDER": 16,
+                "MANDATORY": true
+            }
+        },
+        {
+            "code": "test_step",
+            "name": "Шаг Тест-кейса",
+            "type": "test_step",
+            "value": [
+                {
+                    "code": "01727458-63a9-4ae7-ad94-8c014cf7e816",
+                    "stepDescription": {
+                        "text": "{\"type\": \"doc\", \"content\": [{\"type\": \"paragraph\", \"content\": [{\"text\": \"Открыть файл конфигурации /opt/grafana/gse-plugin.ini с настройками healthcheck\", \"type\": \"text\"}]}]}"
+                    },
+                    "stepData": {
+                        "text": "{\"type\": \"doc\", \"content\": [{\"type\": \"paragraph\", \"attrs\": {\"textAlign\": \"justify\"}}]}"
+                    },
+                    "stepResult": {
+                        "text": "{\"type\": \"doc\", \"content\": [{\"type\": \"paragraph\", \"content\": [{\"text\": \"Файл открыт для редактирования\", \"type\": \"text\"}]}]}"
+                    },
+                    "callToTestId": null,
+                    "stepNumber": 1,
+                    "stepType": "step_by_step",
+                    "files": null
+                },
+                {
+                    "code": "05ee35fc-46ff-4a96-a075-c8d13ddb9034",
+                    "stepDescription": {
+                        "text": "{\"type\": \"doc\", \"content\": [{\"type\": \"paragraph\", \"content\": [{\"text\": \"Проверить конфигурацию настроек по умолчанию в файле. Убедиться, что настройки установлены: INDICATOR_AUDIT_KAFKA_ENABLED=true, INDICATOR_HEALTHCHECK_AUDIT_ENABLED:true, INDICATOR_HEALTHCHECK_AUDIT_REQUIRED:true, INDICATOR_HEALTHCHECK_AUDIT_MAX_400_ERRORS:20, INDICATOR_HEALTHCHECK_AUDIT_MAX_500_ERRORS:20, INDICATOR_HEALTHCHECK_AUDIT_MAX_UNAVAILABLE_TIME:60, INDICATOR_HEALTHCHECK_AUDIT_PUBLIC_NAME: audit\", \"type\": \"text\"}]}]}"
+                    },
+                    "stepData": {
+                        "text": "{\"type\": \"doc\", \"content\": [{\"type\": \"paragraph\", \"attrs\": {\"textAlign\": \"justify\"}}]}"
+                    },
+                    "stepResult": {
+                        "text": "{\"type\": \"doc\", \"content\": [{\"type\": \"paragraph\", \"content\": [{\"text\": \"Настройки совпадают\", \"type\": \"text\"}]}]}"
+                    },
+                    "callToTestId": null,
+                    "stepNumber": 2,
+                    "stepType": "step_by_step",
+                    "files": null
+                },
+                {
+                    "code": "0bd136c2-4e69-453c-bc80-6b5d87f964bd",
+                    "stepDescription": {
+                        "text": "{\"type\": \"doc\", \"content\": [{\"type\": \"paragraph\", \"content\": [{\"text\": \"[по ошибкам] Настроить параметры для вывода по ошибкам. 1) Установить параметры: INDICATOR_HEALTHCHECK_AUDIT_ENABLED:true, INDICATOR_HEALTHCHECK_AUDIT_REQUIRED:true, INDICATOR_HEALTHCHECK_AUDIT_MAX_400_ERRORS:2, INDICATOR_HEALTHCHECK_AUDIT_MAX_500_ERRORS:20, INDICATOR_HEALTHCHECK_AUDIT_MAX_UNAVAILABLE_TIME:60, INDICATOR_HEALTHCHECK_AUDIT_PUBLIC_NAME: audit. 2) Перезапустить службу\", \"type\": \"text\"}]}]}"
+                    },
+                    "stepData": {
+                        "text": "{\"type\": \"doc\", \"content\": [{\"type\": \"paragraph\", \"attrs\": {\"textAlign\": \"justify\"}}]}"
+                    },
+                    "stepResult": {
+                        "text": "{\"type\": \"doc\", \"content\": [{\"type\": \"paragraph\", \"content\": [{\"text\": \"Настройки установлены. Служба успешно перезапущена\", \"type\": \"text\"}]}]}"
+                    },
+                    "callToTestId": null,
+                    "stepNumber": 3,
+                    "stepType": "step_by_step",
+                    "files": null
+                },
+                {
+                    "code": "f07647b5-2c2c-4b82-99c8-0dd3e3ddaa0d",
+                    "stepDescription": {
+                        "text": "{\"type\": \"doc\", \"content\": [{\"type\": \"paragraph\", \"attrs\": {\"id\": \"f47733cd-b941-446f-94e8-c8cc156df3a3\", \"indent\": 0, \"textAlign\": \"justify\"}, \"content\": [{\"text\": \"[по ошибкам] Инициировать вывод из балансировки. 1. Изменить конфигурацию хоста Kafka и сделать его НЕ валидным. 2. Перейти в UI и сделать 2+ запроса в audit. 3. Выполнить запрос HC сервиса и проверить ответ. В rest клиенте (postman): GET \", \"type\": \"text\"}, {\"text\": \"https://dev-view-grafana-01.opsmon.sbt:3000/actuator/health/readiness\", \"type\": \"text\", \"marks\": [{\"type\": \"link\", \"attrs\": {\"rel\": \"noopener noreferrer nofollow\", \"href\": \"https://dev-view-grafana-01.opsmon.sbt:3000/actuator/health/readiness\", \"class\": null, \"isFile\": null, \"target\": \"_blank\", \"needsConfig\": null}}]}, {\"text\": \" 4. Перейти в UI INDA и проверить его работоспособность\", \"type\": \"text\"}]}]}"
+                    },
+                    "stepData": {
+                        "text": "{\"type\": \"doc\", \"content\": [{\"type\": \"paragraph\", \"attrs\": {\"textAlign\": \"justify\"}}]}"
+                    },
+                    "stepResult": {
+                        "text": "{\"type\": \"doc\", \"content\": [{\"type\": \"paragraph\", \"content\": [{\"text\": \"Хост заменен на НЕ валидный. Запрос возвращает < HTTP/1.1 503 Service Unavailable. В теле пишется сообщение об ошибке. UI INDA не работает\", \"type\": \"text\"}]}]}"
+                    },
+                    "callToTestId": null,
+                    "stepNumber": 4,
+                    "stepType": "step_by_step",
+                    "files": null
+                },
+                {
+                    "code": "0ce618e0-7aef-460c-912c-fe2dc2a0e0be",
+                    "stepDescription": {
+                        "text": "{\"type\": \"doc\", \"content\": [{\"type\": \"paragraph\", \"content\": [{\"text\": \"[по ошибкам] Проверка лога. 1. Перейти в лог сервиса inda. 2. Найти лог с ошибками Аудита\", \"type\": \"text\"}]}]}"
+                    },
+                    "stepData": {
+                        "text": "{\"type\": \"doc\", \"content\": [{\"type\": \"paragraph\", \"attrs\": {\"textAlign\": \"justify\"}}]}"
+                    },
+                    "stepResult": {
+                        "text": "{\"type\": \"doc\", \"content\": [{\"type\": \"paragraph\", \"content\": [{\"text\": \"Лог недоступности аудита найден\", \"type\": \"text\"}]}]}"
+                    },
+                    "callToTestId": null,
+                    "stepNumber": 5,
+                    "stepType": "step_by_step",
+                    "files": null
+                },
+                {
+                    "code": "78794a2b-a760-4314-b73e-13fea4f94676",
+                    "stepDescription": {
+                        "text": "{\"type\": \"doc\", \"content\": [{\"type\": \"paragraph\", \"attrs\": {\"id\": \"a1b4637b-e153-40b3-8ec1-13178e0a7183\", \"indent\": 0, \"textAlign\": \"justify\"}, \"content\": [{\"text\": \"[по ошибкам] Проверить восстановление после вывода из балансировки. 1. Сделать хост Kafka валидным. 2. Дождаться времени восстановления INDICATOR_HEALTHCHECK_AUDIT_MAX_UNAVAILABLE_TIME:60. 3. Убедиться, что сервис восстановился. В rest клиенте (postman): GET \", \"type\": \"text\"}, {\"text\": \"https://dev-view-grafana-01.opsmon.sbt:3000/actuator/health/readiness\", \"type\": \"text\", \"marks\": [{\"type\": \"link\", \"attrs\": {\"rel\": \"noopener noreferrer nofollow\", \"href\": \"https://dev-view-grafana-01.opsmon.sbt:3000/actuator/health/readiness\", \"class\": null, \"isFile\": null, \"target\": \"_blank\", \"needsConfig\": null}}]}, {\"text\": \". 4. Перейти в UI INDA и проверить его работоспособность\", \"type\": \"text\"}]}]}"
+                    },
+                    "stepData": {
+                        "text": "{\"type\": \"doc\", \"content\": [{\"type\": \"paragraph\", \"attrs\": {\"textAlign\": \"justify\"}}]}"
+                    },
+                    "stepResult": {
+                        "text": "{\"type\": \"doc\", \"content\": [{\"type\": \"paragraph\", \"content\": [{\"text\": \"Хост восстановлен на валидный. Запрос после INDICATOR_HEALTHCHECK_AUDIT_MAX_UNAVAILABLE_TIME:60 возвращает 200ок. В теле ответа ошибка отсутствует. Работа UI INDA восстановлена\", \"type\": \"text\"}]}]}"
+                    },
+                    "callToTestId": null,
+                    "stepNumber": 6,
+                    "stepType": "step_by_step",
+                    "files": null
+                },
+                {
+                    "code": "3fcbd606-895a-44d5-9810-807f4d685903",
+                    "stepDescription": {
+                        "text": "{\"type\": \"doc\", \"content\": [{\"type\": \"paragraph\", \"content\": [{\"text\": \"[Критичность] Настроить критичность REQUIRED = false. 1) Установить параметры: INDICATOR_HEALTHCHECK_AUDIT_ENABLED:true, INDICATOR_HEALTHCHECK_AUDIT_REQUIRED:false, INDICATOR_HEALTHCHECK_AUDIT_MAX_400_ERRORS:20, INDICATOR_HEALTHCHECK_AUDIT_MAX_500_ERRORS:2, INDICATOR_HEALTHCHECK_AUDIT_MAX_UNAVAILABLE_TIME:60, INDICATOR_HEALTHCHECK_AUDIT_PUBLIC_NAME: audit. 2) Перезапустить службу\", \"type\": \"text\"}]}]}"
+                    },
+                    "stepData": {
+                        "text": "{\"type\": \"doc\", \"content\": [{\"type\": \"paragraph\", \"attrs\": {\"textAlign\": \"justify\"}}]}"
+                    },
+                    "stepResult": {
+                        "text": "{\"type\": \"doc\", \"content\": [{\"type\": \"paragraph\", \"content\": [{\"text\": \"Настройки установлены. Служба успешно перезапущена\", \"type\": \"text\"}]}]}"
+                    },
+                    "callToTestId": null,
+                    "stepNumber": 7,
+                    "stepType": "step_by_step",
+                    "files": null
+                },
+                {
+                    "code": "dfad6d8e-4b5f-4d4f-9d09-4a56b0614a11",
+                    "stepDescription": {
+                        "text": "{\"type\": \"doc\", \"content\": [{\"type\": \"paragraph\", \"attrs\": {\"id\": \"316eb972-a7a7-4655-b9cd-c7f0df61be5e\", \"indent\": 0, \"textAlign\": \"justify\"}, \"content\": [{\"text\": \"[Критичность] Инициировать вывод из балансировки. 1. Изменить хост Kafka на НЕ валидный. 2. Перейти в UI и выполнить запрос к Аудиту для получения ошибки INDICATOR_HEALTHCHECK_AUDIT_MAX_500_ERRORS:2 - раз. 3. Выполнить запрос HC сервиса и проверить ответ. В rest клиенте (postman): GET \", \"type\": \"text\"}, {\"text\": \"https://dev-view-grafana-01.opsmon.sbt:3000/actuator/health/readiness\", \"type\": \"text\", \"marks\": [{\"type\": \"link\", \"attrs\": {\"rel\": \"noopener noreferrer nofollow\", \"href\": \"https://dev-view-grafana-01.opsmon.sbt:3000/actuator/health/readiness\", \"class\": null, \"isFile\": null, \"target\": \"_blank\", \"needsConfig\": null}}]}, {\"text\": \". 4. Перейти в UI INDA и проверить его работоспособность\", \"type\": \"text\"}]}]}"
+                    },
+                    "stepData": {
+                        "text": "{\"type\": \"doc\", \"content\": [{\"type\": \"paragraph\", \"attrs\": {\"textAlign\": \"justify\"}}]}"
+                    },
+                    "stepResult": {
+                        "text": "{\"type\": \"doc\", \"content\": [{\"type\": \"paragraph\", \"content\": [{\"text\": \"Хост заменен на НЕ валидный. Запрос возвращает 200 ОК. В теле есть ошибка. Работает UI INDA\", \"type\": \"text\"}]}]}"
+                    },
+                    "callToTestId": null,
+                    "stepNumber": 8,
+                    "stepType": "step_by_step",
+                    "files": null
+                },
+                {
+                    "code": "f5901a33-89d4-4d21-8ed4-864f6422b38a",
+                    "stepDescription": {
+                        "text": "{\"type\": \"doc\", \"content\": [{\"type\": \"paragraph\", \"attrs\": {\"id\": \"68cafa42-bcb1-4291-8e49-b25d657a149e\", \"indent\": 0, \"textAlign\": \"justify\"}, \"content\": [{\"text\": \"[Критичность] Восстановление после вывода из балансировки. 1. Сделать хост Kafka валидным. 2. Перейти в UI INDA и проверить его работоспособность. 3. Убедиться, что сервис восстановился. В rest клиенте (postman): GET \", \"type\": \"text\"}, {\"text\": \"https://dev-view-grafana-01.opsmon.sbt:3000/actuator/health/readiness\", \"type\": \"text\", \"marks\": [{\"type\": \"link\", \"attrs\": {\"rel\": \"noopener noreferrer nofollow\", \"href\": \"https://dev-view-grafana-01.opsmon.sbt:3000/actuator/health/readiness\", \"class\": null, \"isFile\": null, \"target\": \"_blank\", \"needsConfig\": null}}]}]}]}"
+                    },
+                    "stepData": {
+                        "text": "{\"type\": \"doc\", \"content\": [{\"type\": \"paragraph\", \"attrs\": {\"textAlign\": \"justify\"}}]}"
+                    },
+                    "stepResult": {
+                        "text": "{\"type\": \"doc\", \"content\": [{\"type\": \"paragraph\", \"content\": [{\"text\": \"Хост восстановлен на валидный. Запрос возвращает 200ок. В теле ответа ошибка отсутствует\", \"type\": \"text\"}]}]}"
+                    },
+                    "callToTestId": null,
+                    "stepNumber": 9,
+                    "stepType": "step_by_step",
+                    "files": null
+                },
+                {
+                    "code": "9f41d1ef-175d-499e-9b62-f86caddc231e",
+                    "stepDescription": {
+                        "text": "{\"type\": \"doc\", \"content\": [{\"type\": \"paragraph\", \"content\": [{\"text\": \"[Отключение ХЧ] Настроить включение ХЧ _ENABLED = false. 1) Установить параметры: INDICATOR_HEALTHCHECK_AUDIT_ENABLED:false, INDICATOR_HEALTHCHECK_AUDIT_REQUIRED:true, INDICATOR_HEALTHCHECK_AUDIT_MAX_400_ERRORS:20, INDICATOR_HEALTHCHECK_AUDIT_MAX_500_ERRORS:2, INDICATOR_HEALTHCHECK_AUDIT_MAX_UNAVAILABLE_TIME:60, INDICATOR_HEALTHCHECK_AUDIT_PUBLIC_NAME: audit. 2) Перезапустить службу\", \"type\": \"text\"}]}]}"
+                    },
+                    "stepData": {
+                        "text": "{\"type\": \"doc\", \"content\": [{\"type\": \"paragraph\", \"attrs\": {\"textAlign\": \"justify\"}}]}"
+                    },
+                    "stepResult": {
+                        "text": "{\"type\": \"doc\", \"content\": [{\"type\": \"paragraph\", \"content\": [{\"text\": \"Настройки установлены. Служба успешно перезапущена\", \"type\": \"text\"}]}]}"
+                    },
+                    "callToTestId": null,
+                    "stepNumber": 10,
+                    "stepType": "step_by_step",
+                    "files": null
+                },
+                {
+                    "code": "abdd19a9-2323-4fd3-9d7c-79941681d22f",
+                    "stepDescription": {
+                        "text": "{\"type\": \"doc\", \"content\": [{\"type\": \"paragraph\", \"attrs\": {\"id\": \"5f409683-ecfd-428a-9113-e97120023055\", \"indent\": 0, \"textAlign\": \"justify\"}, \"content\": [{\"text\": \"[Отключение ХЧ] Инициировать вывод из балансировки. 1. Изменить хост Kafka на НЕ валидный. 2. Перейти в UI и выполнить запрос к AUDIT для получения ошибок. 3. Выполнить запрос HC сервиса и проверить ответ. В rest клиенте (postman): GET \", \"type\": \"text\"}, {\"text\": \"https://dev-view-grafana-01.opsmon.sbt:3000/actuator/health/readiness\", \"type\": \"text\", \"marks\": [{\"type\": \"link\", \"attrs\": {\"rel\": \"noopener noreferrer nofollow\", \"href\": \"https://dev-view-grafana-01.opsmon.sbt:3000/actuator/health/readiness\", \"class\": null, \"isFile\": null, \"target\": \"_blank\", \"needsConfig\": null}}]}, {\"text\": \". 4. Проверить вывод из балансировки службы INDA\", \"type\": \"text\"}]}]}"
+                    },
+                    "stepData": {
+                        "text": "{\"type\": \"doc\", \"content\": [{\"type\": \"paragraph\", \"attrs\": {\"textAlign\": \"justify\"}}]}"
+                    },
+                    "stepResult": {
+                        "text": "{\"type\": \"doc\", \"content\": [{\"type\": \"paragraph\", \"content\": [{\"text\": \"Хост заменен на НЕ валидный. Запрос возвращает 200 ОК. В теле не упоминается AUDIT. UI INDA работает. Служба INDA не выведена из балансировки\", \"type\": \"text\"}]}]}"
+                    },
+                    "callToTestId": null,
+                    "stepNumber": 11,
+                    "stepType": "step_by_step",
+                    "files": null
+                },
+                {
+                    "code": "7ce9fb0f-6961-4ec8-8ae0-f954d914e9e6",
+                    "stepDescription": {
+                        "text": "{\"type\": \"doc\", \"content\": [{\"type\": \"paragraph\", \"attrs\": {\"id\": \"16d1b2b2-33cf-421f-ada4-cecc24156c07\", \"indent\": 0, \"textAlign\": \"justify\"}, \"content\": [{\"text\": \"[Отключение ХЧ] Проверить восстановление после вывода из балансировки. 1. Сделать хост валидным. 2. Перейти в UI INDA и проверить его работоспособность. 3. В rest клиенте (postman): GET \", \"type\": \"text\"}, {\"text\": \"https://dev-view-grafana-01.opsmon.sbt:3000/actuator/health/readiness\", \"type\": \"text\", \"marks\": [{\"type\": \"link\", \"attrs\": {\"rel\": \"noopener noreferrer nofollow\", \"href\": \"https://dev-view-grafana-01.opsmon.sbt:3000/actuator/health/readiness\", \"class\": null, \"isFile\": null, \"target\": \"_blank\", \"needsConfig\": null}}]}, {\"text\": \". 4. В консоли ВМ выполнить: curl -Sv localhost:3000/metrics\", \"type\": \"text\"}]}]}"
+                    },
+                    "stepData": {
+                        "text": "{\"type\": \"doc\", \"content\": [{\"type\": \"paragraph\", \"attrs\": {\"textAlign\": \"justify\"}}]}"
+                    },
+                    "stepResult": {
+                        "text": "{\"type\": \"doc\", \"content\": [{\"type\": \"paragraph\", \"content\": [{\"text\": \"Хост восстановлен на валидный. Работа UI INDA восстановлена. Запрос readiness возвращает 200ок. Запрос метрик возвращает все метрики кроме AUDIT\", \"type\": \"text\"}]}]}"
+                    },
+                    "callToTestId": null,
+                    "stepNumber": 12,
+                    "stepType": "step_by_step",
+                    "files": null
+                },
+                {
+                    "code": "940f1500-d978-4b54-82fe-6aad1243f775",
+                    "stepDescription": {
+                        "text": "{\"type\": \"doc\", \"content\": [{\"type\": \"paragraph\", \"content\": [{\"text\": \"[Публичное Имя] Настроить PUBLIC_NAME:databaseTime. 1) Установить параметры: INDICATOR_HEALTHCHECK_AUDIT_ENABLED: true, INDICATOR_HEALTHCHECK_AUDIT_REQUIRED:true, INDICATOR_HEALTHCHECK_AUDIT_MAX_400_ERRORS:20, INDICATOR_HEALTHCHECK_AUDIT_MAX_500_ERRORS:20, INDICATOR_HEALTHCHECK_AUDIT_MAX_UNAVAILABLE_TIME:60, INDICATOR_HEALTHCHECK_AUDIT_PUBLIC_NAME: audit-rabotaet-s-19-do-20. 2) Перезапустить службу\", \"type\": \"text\"}]}]}"
+                    },
+                    "stepData": {
+                        "text": "{\"type\": \"doc\", \"content\": [{\"type\": \"paragraph\", \"attrs\": {\"textAlign\": \"justify\"}}]}"
+                    },
+                    "stepResult": {
+                        "text": "{\"type\": \"doc\", \"content\": [{\"type\": \"paragraph\", \"content\": [{\"text\": \"Настройки установлены. Служба успешно перезапущена\", \"type\": \"text\"}]}]}"
+                    },
+                    "callToTestId": null,
+                    "stepNumber": 13,
+                    "stepType": "step_by_step",
+                    "files": null
+                },
+                {
+                    "code": "62657c72-b572-400a-a958-af1dfd0f3a7b",
+                    "stepDescription": {
+                        "text": "{\"type\": \"doc\", \"content\": [{\"type\": \"paragraph\", \"attrs\": {\"id\": \"3fcdf1be-6bd3-42c1-bef8-0cf13e5137fb\", \"indent\": 0, \"textAlign\": \"justify\"}, \"content\": [{\"text\": \"[Публичное имя] Проверить публичное имя. 1. В rest клиенте (postman): GET \", \"type\": \"text\"}, {\"text\": \"https://dev-view-grafana-01.opsmon.sbt:3000/actuator/health/readiness\", \"type\": \"text\", \"marks\": [{\"type\": \"link\", \"attrs\": {\"rel\": \"noopener noreferrer nofollow\", \"href\": \"https://dev-view-grafana-01.opsmon.sbt:3000/actuator/health/readiness\", \"class\": null, \"isFile\": null, \"target\": \"_blank\", \"needsConfig\": null}}]}, {\"text\": \". 2. В консоли ВМ выполнить: curl -Sv localhost:3000/metrics\", \"type\": \"text\"}]}]}"
+                    },
+                    "stepData": {
+                        "text": "{\"type\": \"doc\", \"content\": [{\"type\": \"paragraph\", \"attrs\": {\"textAlign\": \"justify\"}}]}"
+                    },
+                    "stepResult": {
+                        "text": "{\"type\": \"doc\", \"content\": [{\"type\": \"paragraph\", \"content\": [{\"text\": \"Запрос readiness возвращает 200ок. Запрос возвращает метрики. Название метрики скорректировано\", \"type\": \"text\"}]}]}"
+                    },
+                    "callToTestId": null,
+                    "stepNumber": 14,
+                    "stepType": "step_by_step",
+                    "files": null
+                },
+                {
+                    "code": "ee5622f2-eb10-4b1a-8f24-1ea7f137eed6",
+                    "stepDescription": {
+                        "text": "{\"type\": \"doc\", \"content\": [{\"type\": \"paragraph\", \"content\": [{\"text\": \"Установить параметры: INDICATOR_HEALTHCHECK_AUDIT_ENABLED:false, INDICATOR_HEALTHCHECK_AUDIT_REQUIRED:true, INDICATOR_HEALTHCHECK_AUDIT_MAX_400_ERRORS:2, INDICATOR_HEALTHCHECK_AUDIT_MAX_500_ERRORS:20, INDICATOR_HEALTHCHECK_AUDIT_MAX_UNAVAILABLE_TIME:60, INDICATOR_HEALTHCHECK_AUDIT_PUBLIC_NAME: audit. Перезапустить службу\", \"type\": \"text\"}]}]}"
+                    },
+                    "stepData": {
+                        "text": "{\"type\": \"doc\", \"content\": [{\"type\": \"paragraph\", \"attrs\": {\"textAlign\": \"justify\"}}]}"
+                    },
+                    "stepResult": {
+                        "text": "{\"type\": \"doc\", \"content\": [{\"type\": \"paragraph\", \"content\": [{\"text\": \"Настройки установлены. Служба успешно перезапущена\", \"type\": \"text\"}]}]}"
+                    },
+                    "callToTestId": null,
+                    "stepNumber": 15,
+                    "stepType": "step_by_step",
+                    "files": null
+                },
+                {
+                    "code": "0b59dc1a-4dae-454f-92ce-5c27d4b45f5a",
+                    "stepDescription": {
+                        "text": "{\"type\": \"doc\", \"content\": [{\"type\": \"paragraph\", \"content\": [{\"text\": \"Сделать хост Kafka НЕ валидным\", \"type\": \"text\"}]}]}"
+                    },
+                    "stepData": {
+                        "text": "{\"type\": \"doc\", \"content\": [{\"type\": \"paragraph\", \"attrs\": {\"textAlign\": \"justify\"}}]}"
+                    },
+                    "stepResult": {
+                        "text": "{\"type\": \"doc\", \"content\": [{\"type\": \"paragraph\", \"attrs\": {\"textAlign\": \"justify\"}}]}"
+                    },
+                    "callToTestId": null,
+                    "stepNumber": 16,
+                    "stepType": "step_by_step",
+                    "files": null
+                },
+                {
+                    "code": "091a259f-8f0e-4158-a598-558a68d1ca35",
+                    "stepDescription": {
+                        "text": "{\"type\": \"doc\", \"content\": [{\"type\": \"paragraph\", \"content\": [{\"text\": \"Проверить работоспособность индикатора\", \"type\": \"text\"}]}]}"
+                    },
+                    "stepData": {
+                        "text": "{\"type\": \"doc\", \"content\": [{\"type\": \"paragraph\", \"attrs\": {\"textAlign\": \"justify\"}}]}"
+                    },
+                    "stepResult": {
+                        "text": "{\"type\": \"doc\", \"content\": [{\"type\": \"paragraph\", \"attrs\": {\"textAlign\": \"justify\"}}]}"
+                    },
+                    "callToTestId": null,
+                    "stepNumber": 17,
+                    "stepType": "step_by_step",
+                    "files": null
+                }
+            ],
+            "valueAsString": "",
+            "parameters": {
+                "ORDER": 14
+            }
+        },
+        {
+            "code": "label",
+            "name": "Labels",
+            "type": "label",
+            "value": [],
+            "valueAsString": "",
+            "parameters": {
+                "ORDER": 4
+            }
+        },
+        {
+            "code": "automated",
+            "name": "Автоматизирован",
+            "type": "taxonomy",
+            "value": null,
+            "valueAsString": "",
+            "parameters": {
+                "ORDER": 0
+            }
+        },
+        {
+            "code": "folder",
+            "name": "Папка",
+            "type": "folder",
+            "value": {
+                "code": "62f8066e-211a-49f6-8a20-def0196c7837",
+                "title": "Healthcheck"
+            },
+            "valueAsString": "",
+            "parameters": {
+                "ORDER": 3,
+                "MANDATORY": true
+            }
+        },
+        {
+            "code": "test_level",
+            "name": "Уровень теста",
+            "type": "taxonomy",
+            "value": null,
+            "valueAsString": "",
+            "parameters": {
+                "ORDER": 9
+            }
+        },
+        {
+            "code": "product_name",
+            "name": "Название продукта",
+            "type": "plain_text",
+            "value": null,
+            "valueAsString": "",
+            "parameters": {
+                "ORDER": 20,
+                "MANDATORY": false
+            }
+        },
+        {
+            "code": "old_jira_key",
+            "name": "OLD Jira Key",
+            "type": "text",
+            "value": null,
+            "valueAsString": "",
+            "parameters": {
+                "ORDER": 17,
+                "MANDATORY": false
+            }
+        },
+        {
+            "code": "premigration_author",
+            "name": "Автор до миграции",
+            "type": "text",
+            "value": null,
+            "valueAsString": "",
+            "parameters": {
+                "ORDER": 18,
+                "MANDATORY": false
+            }
+        },
+        {
+            "code": "target_fp",
+            "name": "Целевая ФП",
+            "type": "text",
+            "value": "Библиотека плагинов View Целевой",
+            "valueAsString": "",
+            "parameters": {
+                "ORDER": 19,
+                "MANDATORY": false
+            }
+        },
+        {
+            "code": "pmi",
+            "name": "ПМИ",
+            "type": "taxonomy",
+            "value": {
+                "code": "not",
+                "name": "Нет"
+            },
+            "valueAsString": "",
+            "parameters": {
+                "ORDER": 10,
+                "MANDATORY": true
+            }
+        },
+        {
+            "code": "product_version",
+            "name": "Версия продукта",
+            "type": "text",
+            "value": null,
+            "valueAsString": "",
+            "parameters": {
+                "ORDER": 12,
+                "MANDATORY": false
+            }
+        },
+        {
+            "code": "component_version",
+            "name": "Версия компонента",
+            "type": "text",
+            "value": null,
+            "valueAsString": "",
+            "parameters": {
+                "ORDER": 11,
+                "MANDATORY": false
+            }
+        },
+        {
+            "code": "CRPV_STS_SUPPORT",
+            "name": "CRPV/STS/SUPPORT",
+            "type": "text",
+            "value": null,
+            "valueAsString": "",
+            "parameters": {
+                "ORDER": 13,
+                "MANDATORY": false
+            }
+        },
+        {
+            "code": "test_case_status",
+            "name": "Статус",
+            "type": "taxonomy",
+            "value": {
+                "code": "draft",
+                "name": "Черновик"
+            },
+            "valueAsString": "",
+            "parameters": {
+                "DEFAULT_VALUE": "draft",
+                "ORDER": 8,
+                "MANDATORY": true
+            }
+        },
+        {
+            "code": "precondition",
+            "name": "Предусловие",
+            "type": "wisiwig",
+            "value": null,
+            "valueAsString": "",
+            "parameters": {
+                "ORDER": 6
+            }
+        },
+        {
+            "code": "AftTestCaseName",
+            "name": "AftTestCaseName",
+            "type": "text",
+            "value": null,
+            "valueAsString": "",
+            "parameters": {
+                "ORDER": 23,
+                "MANDATORY": false
+            }
+        },
+        {
+            "code": "Automation_framework",
+            "name": "Framework автоматизации",
+            "type": "taxonomy",
+            "value": null,
+            "valueAsString": "",
+            "parameters": {
+                "ORDER": 1,
+                "MANDATORY": false
+            }
+        },
+        {
+            "code": "priority",
+            "name": "Приоритет",
+            "type": "taxonomy",
+            "value": null,
+            "valueAsString": "",
+            "parameters": {
+                "ORDER": 7
+            }
+        },
+        {
+            "code": "more_than_1",
+            "name": "Требуется больше 1 контура",
+            "type": "swtr_check_list_plugin_list",
+            "value": [],
+            "valueAsString": "",
+            "parameters": {
+                "ORDER": 25,
+                "MANDATORY": false
+            }
+        },
+        {
+            "code": "test_type",
+            "name": "Вид теста",
+            "type": "taxonomy",
+            "value": {
+                "code": "integration_type",
+                "name": "Интеграционный"
+            },
+            "valueAsString": "",
+            "parameters": {
+                "ORDER": 15,
+                "MANDATORY": true
+            }
+        },
+        {
+            "code": "spec_for",
+            "name": "Специфичен для",
+            "type": "multitaxonomy",
+            "value": [],
+            "valueAsString": "",
+            "parameters": {
+                "ORDER": 24,
+                "MANDATORY": false
+            }
+        },
+        {
+            "code": "component_code",
+            "name": "Код компонента",
+            "type": "searchable_taxonomy",
+            "value": {
+                "code": "PLUG",
+                "name": "PLUG"
+            },
+            "valueAsString": "",
+            "parameters": {
+                "ORDER": 22
+            }
+        },
+        {
+            "code": "product_code",
+            "name": "Код продукта",
+            "type": "searchable_taxonomy",
+            "value": null,
+            "valueAsString": "",
+            "parameters": {
+                "ORDER": 21
+            }
+        },
+        {
+            "code": "case_version_relevant_from",
+            "name": "Версия кейса актуальна с",
+            "type": "taxonomy",
+            "value": null,
+            "valueAsString": "",
+            "parameters": {
+                "ORDER": 26,
+                "MANDATORY": false
+            }
+        },
+        {
+            "code": "not_updated_since_version",
+            "name": "Не актуален с версии",
+            "type": "taxonomy",
+            "value": null,
+            "valueAsString": "",
+            "parameters": {
+                "ORDER": 27,
+                "MANDATORY": false
+            }
+        }
+    ],
+    "validatorErrorMsgs": null
+}

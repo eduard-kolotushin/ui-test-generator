@@ -8,6 +8,7 @@ the agent expects.
 """
 from __future__ import annotations
 
+import ast
 import asyncio
 import json
 from typing import Any, Dict, List
@@ -18,18 +19,58 @@ from pydantic import BaseModel, Field, field_validator
 from src.tasktracker.steps import TestStepSpec
 
 
+def _one_step_to_dict(item: Any) -> Dict[str, Any] | None:
+    """Coerce a single step to a dict with step_description, step_data, step_result."""
+    if isinstance(item, dict):
+        return {
+            "step_description": item.get("step_description", ""),
+            "step_data": item.get("step_data", ""),
+            "step_result": item.get("step_result", ""),
+        }
+    if isinstance(item, str) and item.strip():
+        try:
+            parsed = json.loads(item)
+        except (json.JSONDecodeError, TypeError):
+            try:
+                parsed = ast.literal_eval(item)
+            except (ValueError, SyntaxError):
+                return None
+        if isinstance(parsed, dict):
+            return {
+                "step_description": parsed.get("step_description", ""),
+                "step_data": parsed.get("step_data", ""),
+                "step_result": parsed.get("step_result", ""),
+            }
+    return None
+
+
 def _steps_from_string_or_list(v: Any) -> Any:
-    """Coerce steps to a list; LLMs sometimes pass a JSON string instead of a list."""
+    """Coerce steps to a list of step dicts; LLMs sometimes pass a JSON string or Python literal."""
     if isinstance(v, str):
         s = v.strip()
         if not s:
             return []
         try:
             parsed = json.loads(s)
-            if isinstance(parsed, list):
-                return parsed
         except (json.JSONDecodeError, TypeError):
-            pass
+            try:
+                parsed = ast.literal_eval(s)
+            except (ValueError, SyntaxError):
+                return v
+        if isinstance(parsed, list):
+            out = []
+            for item in parsed:
+                step_dict = _one_step_to_dict(item)
+                if step_dict is not None:
+                    out.append(step_dict)
+            return out
+    if isinstance(v, list):
+        out = []
+        for item in v:
+            step_dict = _one_step_to_dict(item)
+            if step_dict is not None:
+                out.append(step_dict)
+        return out
     return v
 
 

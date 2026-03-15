@@ -14,7 +14,6 @@ from langgraph.store.memory import InMemoryStore
 from src.agent.prompts import SYSTEM_PROMPT
 from src.mcp.tasktracker_client_tools import (
     create_folder_tool,
-    create_test_case_from_steps_tool,
     create_test_case_tool,
     get_root_folder_units_tool,
     get_single_test_case_tool,
@@ -182,12 +181,9 @@ def build_agent() -> Any:
         create_folder_tool(),
         get_test_cases_tool(),
         get_single_test_case_tool(),
-        # Prefer high-level creation tool that builds attributes.test_step
-        create_test_case_from_steps_tool(),
-        # Update existing test case steps (MCP tool name: update_test_case_from_steps)
-        update_test_case_tool(),
-        # High-level create from summary + steps
+        # Create empty test case (no steps); then use update_test_case_from_steps to add steps
         create_test_case_tool(),
+        update_test_case_tool(),
     ]
 
     model = build_model()
@@ -209,7 +205,6 @@ def build_agent() -> Any:
         interrupt_on={
             "create_folder": True,
             "create_test_case": True,
-            "create_test_case_from_steps": True,
             "update_test_case": True,
             "update_test_case_from_steps": True,
         },

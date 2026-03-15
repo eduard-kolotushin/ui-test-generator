@@ -51,25 +51,14 @@ You have access to the following TaskTracker-specific tools (MCP layer plus Lang
 - `get_test_case(code)`  
   Fetch a single test case by its code (for detailed inspection or updates).
 
-- `create_test_case(summary, suit, space, folder_code, steps)`  
-  High-level creation tool exposed by the MCP server. The agent supplies a human
-  summary, suit (usually `test_case`), space code (e.g. `PVM`, `VIEW`), folder code,
-  and an ordered list of steps (step_description, step_data, step_result). The
-  server uses shared helpers in `src/tasktracker/steps.py` to build a safe base
-  payload (derived from the canonical example JSON) and inject the steps; callers
-  do **not** pass arbitrary JSON bodies.
-
-- `create_test_case_from_steps(suit, test_case_base, steps)` (LangChain-only helper)  
-  For advanced flows where the agent already has a tailored base JSON payload
-  (without `attributes.test_step`). The LangChain tool lives in
-  `src/mcp/tasktracker_client_tools.py` and uses `TestStepSpec` plus the shared
-  step helpers to attach steps before calling the low-level API client.
+- `create_test_case(summary, suit, space, folder_code)`  
+  Creates an **empty** test case in the given folder (no steps). TaskTracker does not
+  accept new test cases with client-generated step codes, so steps must be added
+  afterwards. Returns the new test case code (e.g. VIEW-8675).
 
 - `update_test_case_from_steps(code, steps)`  
-  Preferred way to update an existing test case’s steps. Provide the test case code
-  and an ordered list of steps (step_description, step_data, step_result). The tool
-  fetches the current test case, preserves existing step codes where possible,
-  builds the correct `attributes.test_step.testStepList` patch body and calls the API.
+  Preferred way to update an existing test case’s steps. Your ordered list of steps: step_description, step_data, step_result. The tool
+  fetches the current test case, preserves step codes where needed, builds the patch, and calls the API.
 
 ## High-level workflow
 
@@ -89,10 +78,10 @@ You have access to the following TaskTracker-specific tools (MCP layer plus Lang
    - Ensure required fields inferred from existing tests are populated.
 
 4. **Apply changes via tools**
-   - For new tests: use the `test_case_base` structure from the system prompt and
-     call `create_test_case_from_steps(suit, test_case_base, steps)`.
+   - For new tests: call `create_test_case(summary, suit, space, folder_code)` (no steps),
+     then call `update_test_case_from_steps(code, steps)` with the returned code and your steps.
    - For step-only changes: call `update_test_case_from_steps(code, steps)`.
-   - For other field changes: call `update_test_case(code, patch_json)`.
+   - For other field changes: call `update_test_case(code, patch_json)` if available.
 
 5. **Explain results to the user**
    - Summarize what new tests were created or which existing tests were updated.

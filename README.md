@@ -132,7 +132,7 @@ The server uses **stdio** by default. Configure the same environment variables a
 
 Use the project root as `--directory` so `uv run` resolves the app and env.
 
-**Tools exposed:** `get_root_folder_units`, `create_folder`, `get_test_cases`, `get_test_case`, `create_test_case`, `create_test_case_from_steps`, `update_test_case`.
+**Tools exposed:** `get_root_folder_units`, `create_folder`, `get_test_cases`, `get_test_case`, `create_test_case`, `update_test_case_from_steps`.
 
 ### Local testing without TaskTracker (stub)
 

@@ -71,8 +71,8 @@ The actual HTTP endpoints and payload shapes are implemented in `src/tasktracker
   - Typical operations from the agent’s point of view:
     - `get_root_folder_units` – discover folder hierarchy and root-level units.
     - `get_test_cases` / `get_test_case` – read existing tests to use as templates.
-    - `create_test_case` / `create_test_case_from_steps` – create new tests in a target folder from a summary plus steps.
-    - `update_test_case_from_steps` – update the steps of an existing test case by code while preserving step codes.
+    - `create_test_case` – create an empty test case (summary, suit, space, folder_code); then use `update_test_case_from_steps` to add steps (TaskTracker does not accept new step codes on create).
+    - `update_test_case_from_steps` – add or replace steps on an existing test case by code.
 - **System prompt** (see `src/agent/prompts.py`): Instructs the agent to (1) identify source and target folders, (2) fetch source tests, (3) generate adapted test case JSON, (4) create them in the target folder. It should keep JSON structure consistent with the source unless the user asks otherwise.
 - **Entrypoint**: CLI in `src/main.py`; one-shot or interactive; the CLI sends user instructions to the deep agent and prints the agent’s final answer (and, optionally, debug JSON).
 

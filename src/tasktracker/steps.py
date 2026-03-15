@@ -57,44 +57,6 @@ def build_formatted_text(text: str) -> str:
     return json.dumps(doc, ensure_ascii=False)
 
 
-def build_test_steps(steps: List[Union[TestStepSpec, Dict[str, Any]]]) -> List[Dict[str, Any]]:
-    """
-    Build the TaskTracker `attributes.test_step` list from step specs.
-
-    Accepts either TestStepSpec instances or dicts with keys step_description,
-    step_data (optional), step_result.
-    """
-    result: List[Dict[str, Any]] = []
-    for idx, step in enumerate(steps, start=1):
-        if isinstance(step, dict):
-            spec = TestStepSpec(
-                step_description=step.get("step_description", ""),
-                step_data=step.get("step_data", ""),
-                step_result=step.get("step_result", ""),
-            )
-        else:
-            spec = step
-        result.append(
-            {
-                "code": str(uuid4()),
-                "stepDescription": {
-                    "text": build_formatted_text(spec.step_description),
-                },
-                "stepData": {
-                    "text": build_formatted_text(spec.step_data or ""),
-                },
-                "stepResult": {
-                    "text": build_formatted_text(spec.step_result),
-                },
-                "callToTestId": None,
-                "stepNumber": idx,
-                "stepType": "step_by_step",
-                "files": None,
-            }
-        )
-    return result
-
-
 def build_test_case_base(
     *,
     summary: str,
@@ -168,12 +130,11 @@ def create_test_case_from_steps(
     """
     payload = deepcopy(test_case_base)
     attributes = payload.setdefault("attributes", {})
-    attributes["test_step"] = build_test_steps(steps)
+    attributes["test_step"] = []  # Create always empty; steps are added via update_test_case_from_steps
     log.info(
-        "create_test_case_from_steps: sending payload summary=%s suit=%s steps_count=%s",
+        "create_test_case_from_steps: sending payload summary=%s suit=%s (empty steps)",
         payload.get("summary"),
         suit,
-        len(attributes.get("test_step") or []),
     )
     log.debug("create_test_case_from_steps payload body: %s", json.dumps(payload, ensure_ascii=False)[:2000])
     return create_test_case(suit=suit, test_case_json=payload)

@@ -174,36 +174,6 @@ class CreateTestCaseInput(BaseModel):
         ...,
         description="Code of the TaskTracker folder where the new test case should be created.",
     )
-    # Accept str or list so agent output is never rejected; wrapper normalizes to list[dict] for MCP.
-    steps: Union[str, List[Any]] = Field(
-        ...,
-        description=(
-            "Ordered list of test steps (or JSON string of that list). Each step has "
-            "step_description, step_data (optional), step_result."
-        ),
-    )
-
-
-class CreateTestCaseFromStepsInput(BaseModel):
-    suit: str = Field(
-        "test_case",
-        description="TaskTracker suit code for test cases (usually `test_case`).",
-    )
-    test_case_base: Dict[str, Any] = Field(
-        ...,
-        description=(
-            "Base JSON payload for the new test case (summary, attributes, etc.), "
-            "WITHOUT the `attributes.test_step` field. "
-            "This should typically be copied or adapted from an existing test case."
-        ),
-    )
-    steps: Union[str, List[Any]] = Field(
-        ...,
-        description=(
-            "Ordered list of test steps (or JSON string of that list). "
-            "Each step: step_description, step_data (optional), step_result."
-        ),
-    )
 
 
 class UpdateTestCaseInput(BaseModel):
@@ -255,25 +225,13 @@ def _normalize_steps_for_mcp(steps: Any) -> List[Dict[str, Any]]:
 
 
 def _create_test_case(**kwargs: Any) -> Any:
-    args = dict(kwargs)
-    if "steps" in args:
-        args["steps"] = _normalize_steps_for_mcp(args["steps"])
+    args = {k: v for k, v in kwargs.items() if k in ("summary", "suit", "space", "folder_code")}
     log.info(
-        "create_test_case (to MCP): summary=%s folder_code=%s steps_len=%s",
+        "create_test_case (to MCP): summary=%s folder_code=%s (empty test case)",
         args.get("summary"),
         args.get("folder_code"),
-        len(args.get("steps") or []),
     )
-    log.debug("create_test_case (to MCP) steps: %s", json.dumps(args.get("steps"), ensure_ascii=False)[:2000])
     return _call_mcp_sync("create_test_case", args)
-
-
-def _create_test_case_from_steps(**kwargs: Any) -> Any:
-    args = dict(kwargs)
-    if "steps" in args:
-        args["steps"] = _normalize_steps_for_mcp(args["steps"])
-    log.info("create_test_case_from_steps (to MCP): steps_len=%s", len(args.get("steps") or []))
-    return _call_mcp_sync("create_test_case_from_steps", args)
 
 
 def _update_test_case_from_steps(**kwargs: Any) -> Any:
@@ -341,27 +299,13 @@ def create_test_case_tool() -> StructuredTool:
     return StructuredTool.from_function(
         name="create_test_case",
         description=(
-            "High-level TaskTracker test creation tool. "
-            "Provide summary, suit, space, folder_code, and an ordered list of steps. "
-            "The tool builds a safe base JSON from the canonical example and creates the test case."
+            "Create an empty TaskTracker test case in the given folder. "
+            "Provide summary, suit, space, and folder_code. "
+            "Returns the new test case code (e.g. VIEW-8675). "
+            "Then call update_test_case_from_steps with that code and your steps to add steps."
         ),
         func=_create_test_case,
         args_schema=CreateTestCaseInput,
-    )
-
-
-def create_test_case_from_steps_tool() -> StructuredTool:
-    return StructuredTool.from_function(
-        name="create_test_case_from_steps",
-        description=(
-            "Create a new TaskTracker test case from a simple list of steps. "
-            "You provide a base JSON payload (without `attributes.test_step`) and "
-            "an ordered list of step triples: (step_description, step_data, step_result). "
-            "The tool builds the nested `attributes.test_step` structure and calls "
-            "the TaskTracker API."
-        ),
-        func=_create_test_case_from_steps,
-        args_schema=CreateTestCaseFromStepsInput,
     )
 
 

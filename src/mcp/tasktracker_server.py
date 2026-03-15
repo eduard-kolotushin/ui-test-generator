@@ -119,43 +119,30 @@ def create_test_case(
     suit: str,
     space: str,
     folder_code: str,
-    steps: list[Any],
 ) -> dict[str, Any]:
     """
-    High-level test creation tool.
+    Create an empty test case in the given folder.
+
+    TaskTracker does not accept new test cases with step codes created client-side,
+    so this tool creates a test case with an empty step list. Use
+    update_test_case_from_steps with the returned code to add steps afterwards.
 
     - `summary`: human-readable test case title.
     - `suit`: TaskTracker suit code (usually `test_case`).
     - `space`: TaskTracker space code (e.g. `PVM`, `VIEW`).
     - `folder_code`: TaskTracker folder identifier to place the test in.
-    - `steps`: ordered list of steps (JSON array of objects → list[dict] here), each with step_description, step_data (optional), step_result.
-
-    The tool builds a safe base payload from the canonical example JSON and
-    injects the steps; callers cannot pass arbitrary JSON bodies.
     """
-    steps_dicts = [_step_item_to_dict(s) for s in (steps or [])]
     log.info(
-        "create_test_case tool: summary=%s folder_code=%s incoming_steps_len=%s steps_dicts_len=%s",
+        "create_test_case tool: summary=%s folder_code=%s (empty steps)",
         summary,
         folder_code,
-        len(steps or []),
-        len(steps_dicts),
     )
-    step_specs: list[TestStepSpec] = [
-        TestStepSpec(
-            step_description=d.get("step_description", ""),
-            step_data=d.get("step_data", ""),
-            step_result=d.get("step_result", ""),
-        )
-        for d in steps_dicts
-    ]
-    log.debug("create_test_case step_specs: %s", [(s.step_description[:50], s.step_result[:50]) for s in step_specs])
     result = create_test_case_with_summary(
         summary=summary,
         suit=suit,
         space=space,
         folder_code=folder_code,
-        steps=step_specs,
+        steps=[],
     )
     return _serialize_result(result)
 

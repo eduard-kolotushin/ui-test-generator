@@ -1,0 +1,141 @@
+Exception: Unknown tool: 'create_test_case_from_steps'
+
+Traceback (most recent call last):
+  File "/Users/kolotushin.e.v/IdeaProjects/ui-test-generator/src/main.py", line 122, in _single_run_main
+    result = run_until_done(agent, payload, config, auto_approve=True)
+  File "/Users/kolotushin.e.v/IdeaProjects/ui-test-generator/src/agent/graph.py", line 260, in run_until_done
+    result = agent.invoke(
+        Command(resume={"decisions": decisions}),
+        config=config,
+    )
+  File "/Users/kolotushin.e.v/IdeaProjects/ui-test-generator/.venv/lib/python3.13/site-packages/langgraph/pregel/main.py", line 3071, in invoke
+    for chunk in self.stream(
+                 ~~~~~~~~~~~^
+        input,
+        ^^^^^^
+    ...<10 lines>...
+        **kwargs,
+        ^^^^^^^^^
+    ):
+    ^
+  File "/Users/kolotushin.e.v/IdeaProjects/ui-test-generator/.venv/lib/python3.13/site-packages/langgraph/pregel/main.py", line 2646, in stream
+    for _ in runner.tick(
+             ~~~~~~~~~~~^
+        [t for t in loop.tasks.values() if not t.writes],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+        schedule_task=loop.accept_push,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ):
+    ^
+  File "/Users/kolotushin.e.v/IdeaProjects/ui-test-generator/.venv/lib/python3.13/site-packages/langgraph/pregel/_runner.py", line 167, in tick
+    run_with_retry(
+    ~~~~~~~~~~~~~~^
+        t,
+        ^^
+    ...<10 lines>...
+        },
+        ^^
+    )
+    ^
+  File "/Users/kolotushin.e.v/IdeaProjects/ui-test-generator/.venv/lib/python3.13/site-packages/langgraph/pregel/_retry.py", line 42, in run_with_retry
+    return task.proc.invoke(task.input, config)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kolotushin.e.v/IdeaProjects/ui-test-generator/.venv/lib/python3.13/site-packages/langgraph/_internal/_runnable.py", line 656, in invoke
+    input = context.run(step.invoke, input, config, **kwargs)
+  File "/Users/kolotushin.e.v/IdeaProjects/ui-test-generator/.venv/lib/python3.13/site-packages/langgraph/_internal/_runnable.py", line 400, in invoke
+    ret = self.func(*args, **kwargs)
+  File "/Users/kolotushin.e.v/IdeaProjects/ui-test-generator/.venv/lib/python3.13/site-packages/langgraph/prebuilt/tool_node.py", line 813, in _func
+    outputs = list(
+        executor.map(self._run_one, tool_calls, input_types, tool_runtimes)
+    )
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/concurrent/futures/_base.py", line 619, in result_iterator
+    yield _result_or_cancel(fs.pop())
+          ~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/concurrent/futures/_base.py", line 317, in _result_or_cancel
+    return fut.result(timeout)
+           ~~~~~~~~~~^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/concurrent/futures/_base.py", line 456, in result
+    return self.__get_result()
+           ~~~~~~~~~~~~~~~~~^^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/concurrent/futures/_base.py", line 401, in __get_result
+    raise self._exception
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/concurrent/futures/thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/Users/kolotushin.e.v/IdeaProjects/ui-test-generator/.venv/lib/python3.13/site-packages/langchain_core/runnables/config.py", line 579, in _wrapped_fn
+    return contexts.pop().run(fn, *args)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "/Users/kolotushin.e.v/IdeaProjects/ui-test-generator/.venv/lib/python3.13/site-packages/langgraph/prebuilt/tool_node.py", line 1039, in _run_one
+    content = _handle_tool_error(e, flag=self._handle_tool_errors)
+  File "/Users/kolotushin.e.v/IdeaProjects/ui-test-generator/.venv/lib/python3.13/site-packages/langgraph/prebuilt/tool_node.py", line 430, in _handle_tool_error
+    content = flag(e)  # type: ignore [assignment, call-arg]
+  File "/Users/kolotushin.e.v/IdeaProjects/ui-test-generator/.venv/lib/python3.13/site-packages/langgraph/prebuilt/tool_node.py", line 387, in _default_handle_tool_errors
+    raise e
+  File "/Users/kolotushin.e.v/IdeaProjects/ui-test-generator/.venv/lib/python3.13/site-packages/langgraph/prebuilt/tool_node.py", line 1033, in _run_one
+    return self._wrap_tool_call(tool_request, execute)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kolotushin.e.v/IdeaProjects/ui-test-generator/.venv/lib/python3.13/site-packages/deepagents/middleware/filesystem.py", line 1345, in wrap_tool_call
+    tool_result = handler(request)
+  File "/Users/kolotushin.e.v/IdeaProjects/ui-test-generator/.venv/lib/python3.13/site-packages/langgraph/prebuilt/tool_node.py", line 1029, in execute
+    return self._execute_tool_sync(req, input_type, config)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kolotushin.e.v/IdeaProjects/ui-test-generator/.venv/lib/python3.13/site-packages/langgraph/prebuilt/tool_node.py", line 973, in _execute_tool_sync
+    content = _handle_tool_error(e, flag=self._handle_tool_errors)
+  File "/Users/kolotushin.e.v/IdeaProjects/ui-test-generator/.venv/lib/python3.13/site-packages/langgraph/prebuilt/tool_node.py", line 430, in _handle_tool_error
+    content = flag(e)  # type: ignore [assignment, call-arg]
+  File "/Users/kolotushin.e.v/IdeaProjects/ui-test-generator/.venv/lib/python3.13/site-packages/langgraph/prebuilt/tool_node.py", line 387, in _default_handle_tool_errors
+    raise e
+  File "/Users/kolotushin.e.v/IdeaProjects/ui-test-generator/.venv/lib/python3.13/site-packages/langgraph/prebuilt/tool_node.py", line 930, in _execute_tool_sync
+    response = tool.invoke(call_args, config)
+  File "/Users/kolotushin.e.v/IdeaProjects/ui-test-generator/.venv/lib/python3.13/site-packages/langchain_core/tools/base.py", line 642, in invoke
+    return self.run(tool_input, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kolotushin.e.v/IdeaProjects/ui-test-generator/.venv/lib/python3.13/site-packages/langchain_core/tools/base.py", line 1001, in run
+    raise error_to_raise
+  File "/Users/kolotushin.e.v/IdeaProjects/ui-test-generator/.venv/lib/python3.13/site-packages/langchain_core/tools/base.py", line 967, in run
+    response = context.run(self._run, *tool_args, **tool_kwargs)
+  File "/Users/kolotushin.e.v/IdeaProjects/ui-test-generator/.venv/lib/python3.13/site-packages/langchain_core/tools/structured.py", line 97, in _run
+    return self.func(*args, **kwargs)
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/kolotushin.e.v/IdeaProjects/ui-test-generator/src/mcp/tasktracker_client_tools.py", line 274, in _create_test_case_from_steps
+    return _call_mcp_sync("create_test_case_from_steps", args)
+  File "/Users/kolotushin.e.v/IdeaProjects/ui-test-generator/src/mcp/tasktracker_client_tools.py", line 116, in _call_mcp_sync
+    return asyncio.run(_run())
+           ~~~~~~~~~~~^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 194, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 721, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/kolotushin.e.v/IdeaProjects/ui-test-generator/src/mcp/tasktracker_client_tools.py", line 104, in _run
+    tr = await mcp.call_tool(name, arguments)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kolotushin.e.v/IdeaProjects/ui-test-generator/.venv/lib/python3.13/site-packages/fastmcp/server/server.py", line 964, in call_tool
+    return await self._run_middleware(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    )
+    ^
+  File "/Users/kolotushin.e.v/IdeaProjects/ui-test-generator/.venv/lib/python3.13/site-packages/fastmcp/server/server.py", line 400, in _run_middleware
+    return await chain(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kolotushin.e.v/IdeaProjects/ui-test-generator/.venv/lib/python3.13/site-packages/fastmcp/server/middleware/middleware.py", line 92, in __call__
+    return await handler_chain(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kolotushin.e.v/IdeaProjects/ui-test-generator/.venv/lib/python3.13/site-packages/fastmcp/server/middleware/middleware.py", line 133, in on_message
+    return await call_next(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kolotushin.e.v/IdeaProjects/ui-test-generator/.venv/lib/python3.13/site-packages/fastmcp/server/middleware/middleware.py", line 140, in on_request
+    return await call_next(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kolotushin.e.v/IdeaProjects/ui-test-generator/.venv/lib/python3.13/site-packages/fastmcp/server/middleware/middleware.py", line 161, in on_call_tool
+    return await call_next(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kolotushin.e.v/IdeaProjects/ui-test-generator/.venv/lib/python3.13/site-packages/fastmcp/server/server.py", line 982, in call_tool
+    raise NotFoundError(f"Unknown tool: {name!r}")
+fastmcp.exceptions.NotFoundError: Unknown tool: 'create_test_case_from_steps'
+During task with name 'tools' and id '2978e68d-e84c-ee02-f7b1-4ed08c689400'

@@ -11,10 +11,10 @@ from __future__ import annotations
 import ast
 import asyncio
 import json
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Union
 
 from langchain_core.tools import StructuredTool
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field
 
 from src.tasktracker.steps import TestStepSpec
 
@@ -171,19 +171,14 @@ class CreateTestCaseInput(BaseModel):
         ...,
         description="Code of the TaskTracker folder where the new test case should be created.",
     )
-    steps: List[TestStepSpec] = Field(
+    # Accept str or list so agent output is never rejected; wrapper normalizes to list[dict] for MCP.
+    steps: Union[str, List[Any]] = Field(
         ...,
         description=(
-            "Ordered list of test steps. Each item corresponds to one step and "
-            "contains following kyes: step_description, step_data, step_result. "
-            "Pass an empty list if the test should have no steps."
+            "Ordered list of test steps (or JSON string of that list). Each step has "
+            "step_description, step_data (optional), step_result."
         ),
     )
-
-    @field_validator("steps", mode="before")
-    @classmethod
-    def _coerce_steps(cls, v: Any) -> Any:
-        return _steps_from_string_or_list(v)
 
 
 class CreateTestCaseFromStepsInput(BaseModel):
@@ -199,18 +194,13 @@ class CreateTestCaseFromStepsInput(BaseModel):
             "This should typically be copied or adapted from an existing test case."
         ),
     )
-    steps: List[TestStepSpec] = Field(
+    steps: Union[str, List[Any]] = Field(
         ...,
         description=(
-            "Ordered list of test steps. Each item corresponds to one step and "
-            "contains: (step_description, step_data, step_result)."
+            "Ordered list of test steps (or JSON string of that list). "
+            "Each step: step_description, step_data (optional), step_result."
         ),
     )
-
-    @field_validator("steps", mode="before")
-    @classmethod
-    def _coerce_steps(cls, v: Any) -> Any:
-        return _steps_from_string_or_list(v)
 
 
 class UpdateTestCaseInput(BaseModel):
@@ -218,19 +208,13 @@ class UpdateTestCaseInput(BaseModel):
         ...,
         description="Code of the existing TaskTracker test case to update, e.g. `PVM-123`.",
     )
-    steps: List[TestStepSpec] = Field(
+    steps: Union[str, List[Any]] = Field(
         ...,
         description=(
-            "Ordered list of test steps to set for this test case. "
-            "Each item has step_description, step_data (optional), step_result. "
-            "The tool builds the correct patch body and calls the API."
+            "Ordered list of test steps (or JSON string of that list). "
+            "Each step: step_description, step_data (optional), step_result."
         ),
     )
-
-    @field_validator("steps", mode="before")
-    @classmethod
-    def _coerce_steps(cls, v: Any) -> Any:
-        return _steps_from_string_or_list(v)
 
 
 class GetSingleTestCaseInput(BaseModel):
@@ -259,28 +243,32 @@ def _get_test_case(**kwargs: Any) -> Any:
     return _call_mcp_sync("get_test_case", kwargs)
 
 
+def _normalize_steps_for_mcp(steps: Any) -> List[Dict[str, Any]]:
+    """Always produce a list of step dicts for MCP; run regardless of schema validation."""
+    raw_list = _steps_from_string_or_list(steps)
+    if not isinstance(raw_list, list):
+        return []
+    return [d for d in (_one_step_to_dict(item) for item in raw_list) if d is not None]
+
+
 def _create_test_case(**kwargs: Any) -> Any:
-    return _call_mcp_sync("create_test_case", kwargs)
+    args = dict(kwargs)
+    if "steps" in args:
+        args["steps"] = _normalize_steps_for_mcp(args["steps"])
+    return _call_mcp_sync("create_test_case", args)
 
 
 def _create_test_case_from_steps(**kwargs: Any) -> Any:
-    # Convert steps (List[TestStepSpec]) to list of dicts for MCP
     args = dict(kwargs)
-    if "steps" in args and args["steps"]:
-        args["steps"] = [
-            s.model_dump() if hasattr(s, "model_dump") else s
-            for s in args["steps"]
-        ]
+    if "steps" in args:
+        args["steps"] = _normalize_steps_for_mcp(args["steps"])
     return _call_mcp_sync("create_test_case_from_steps", args)
 
 
 def _update_test_case_from_steps(**kwargs: Any) -> Any:
     args = dict(kwargs)
-    if "steps" in args and args["steps"]:
-        args["steps"] = [
-            s.model_dump() if hasattr(s, "model_dump") else s
-            for s in args["steps"]
-        ]
+    if "steps" in args:
+        args["steps"] = _normalize_steps_for_mcp(args["steps"])
     return _call_mcp_sync("update_test_case_from_steps", args)
 
 

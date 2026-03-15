@@ -101,13 +101,22 @@ def get_test_case(code: str) -> dict[str, Any]:
     return _serialize_result(result)
 
 
+def _step_item_to_dict(s: Any) -> dict[str, Any]:
+    """Coerce a step item (dict or model) to a plain dict for TestStepSpec."""
+    if isinstance(s, dict):
+        return s
+    if hasattr(s, "model_dump"):
+        return s.model_dump()
+    return {"step_description": getattr(s, "step_description", "") or "", "step_data": getattr(s, "step_data", "") or "", "step_result": getattr(s, "step_result", "") or ""}
+
+
 @mcp.tool()
 def create_test_case(
     summary: str,
     suit: str,
     space: str,
     folder_code: str,
-    steps: list[dict[str, Any]],
+    steps: list[Any],
 ) -> dict[str, Any]:
     """
     High-level test creation tool.
@@ -121,13 +130,14 @@ def create_test_case(
     The tool builds a safe base payload from the canonical example JSON and
     injects the steps; callers cannot pass arbitrary JSON bodies.
     """
+    steps_dicts = [_step_item_to_dict(s) for s in (steps or [])]
     step_specs: list[TestStepSpec] = [
         TestStepSpec(
-            step_description=s.get("step_description", ""),
-            step_data=s.get("step_data", ""),
-            step_result=s.get("step_result", ""),
+            step_description=d.get("step_description", ""),
+            step_data=d.get("step_data", ""),
+            step_result=d.get("step_result", ""),
         )
-        for s in steps
+        for d in steps_dicts
     ]
     result = create_test_case_with_summary(
         summary=summary,
@@ -140,7 +150,7 @@ def create_test_case(
 
 
 @mcp.tool()
-def update_test_case_from_steps(code: str, steps: list[dict[str, Any]]) -> dict[str, Any]:
+def update_test_case_from_steps(code: str, steps: list[Any]) -> dict[str, Any]:
     """
     Update an existing test case's steps by code.
 
@@ -149,13 +159,14 @@ def update_test_case_from_steps(code: str, steps: list[dict[str, Any]]) -> dict[
     - Builds the appropriate `attributes.test_step.testStepList` patch body.
     - Calls the TaskTracker update API.
     """
+    steps_dicts = [_step_item_to_dict(s) for s in (steps or [])]
     step_specs: list[TestStepSpec] = [
         TestStepSpec(
-            step_description=s.get("step_description", ""),
-            step_data=s.get("step_data", ""),
-            step_result=s.get("step_result", ""),
+            step_description=d.get("step_description", ""),
+            step_data=d.get("step_data", ""),
+            step_result=d.get("step_result", ""),
         )
-        for s in steps
+        for d in steps_dicts
     ]
     result = steps_update_from_steps(code=code, steps=step_specs)
     return _serialize_result(result)

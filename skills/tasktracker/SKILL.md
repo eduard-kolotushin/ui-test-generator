@@ -28,9 +28,9 @@ Use this skill whenever the user asks you to:
 
 ## Available tools
 
-These tools are implemented by the **TaskTracker MCP server** (`src.mcp.tasktracker_server`) and are used by the Deep Agent via `src.mcp.tasktracker_client_tools`. They can also be used directly from Cursor when the MCP server is configured.
+These tools are implemented by the **TaskTracker MCP server** (`src/mcp/tasktracker_server.py`) and are used by the Deep Agent via `src/mcp/tasktracker_client_tools.py`. They can also be used directly from Cursor when the MCP server is configured.
 
-You have access to the following TaskTracker-specific tools:
+You have access to the following TaskTracker-specific tools (MCP layer plus LangChain wrappers):
 
 **Folders (TMS plugin)**
 
@@ -51,22 +51,25 @@ You have access to the following TaskTracker-specific tools:
 - `get_test_case(code)`  
   Fetch a single test case by its code (for detailed inspection or updates).
 
-- `create_test_case_from_steps(suit, test_case_base, steps)`  
-  Preferred high-level tool for creating new TaskTracker test cases. The system
-  prompt includes the exact `test_case_base` JSON structure to use (copy it and
-  set summary, folder, space). Do not add `attributes.test_step` — the tool adds
-  it from your ordered list of steps (step_description, step_data, step_result).
+- `create_test_case(summary, suit, space, folder_code, steps)`  
+  High-level creation tool exposed by the MCP server. The agent supplies a human
+  summary, suit (usually `test_case`), space code (e.g. `PVM`, `VIEW`), folder code,
+  and an ordered list of steps (step_description, step_data, step_result). The
+  server uses shared helpers in `src/tasktracker/steps.py` to build a safe base
+  payload (derived from the canonical example JSON) and inject the steps; callers
+  do **not** pass arbitrary JSON bodies.
 
-- `create_test_case(suit, test_case_json)`  
-  Low-level test creation tool. Use only when you have a full API-shaped payload.
+- `create_test_case_from_steps(suit, test_case_base, steps)` (LangChain-only helper)  
+  For advanced flows where the agent already has a tailored base JSON payload
+  (without `attributes.test_step`). The LangChain tool lives in
+  `src/mcp/tasktracker_client_tools.py` and uses `TestStepSpec` plus the shared
+  step helpers to attach steps before calling the low-level API client.
 
 - `update_test_case_from_steps(code, steps)`  
   Preferred way to update an existing test case’s steps. Provide the test case code
   and an ordered list of steps (step_description, step_data, step_result). The tool
-  builds the correct patch body and calls the API.
-
-- `update_test_case(code, patch_json)`  
-  Low-level update tool. Use when you need to patch fields other than steps.
+  fetches the current test case, preserves existing step codes where possible,
+  builds the correct `attributes.test_step.testStepList` patch body and calls the API.
 
 ## High-level workflow
 

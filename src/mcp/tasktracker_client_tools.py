@@ -99,15 +99,28 @@ class GetTestCasesInput(BaseModel):
 
 
 class CreateTestCaseInput(BaseModel):
+    summary: str = Field(
+        ...,
+        description="Human-readable test case summary / title.",
+    )
     suit: str = Field(
         "test_case",
         description="TaskTracker suit code for test cases (usually `test_case`).",
     )
-    test_case_json: Dict[str, Any] = Field(
+    space: str = Field(
+        ...,
+        description="TaskTracker space code (e.g. `PVM`, `VIEW`).",
+    )
+    folder_code: str = Field(
+        ...,
+        description="Code of the TaskTracker folder where the new test case should be created.",
+    )
+    steps: List[TestStepSpec] = Field(
         ...,
         description=(
-            "Raw JSON payload for the new test case, matching TaskTracker's API schema. "
-            "The agent should base this on existing test cases from `get_test_cases`."
+            "Ordered list of test steps. Each item corresponds to one step and "
+            "contains: (step_description, step_data, step_result). "
+            "Pass an empty list if the test should have no steps."
         ),
     )
 
@@ -135,20 +148,6 @@ class CreateTestCaseFromStepsInput(BaseModel):
 
 
 class UpdateTestCaseInput(BaseModel):
-    code: str = Field(
-        ...,
-        description="Code of the existing TaskTracker test case to update, e.g. `PVM-123`.",
-    )
-    patch_json: Dict[str, Any] = Field(
-        ...,
-        description=(
-            "Partial JSON payload for the update request, matching the TaskTracker "
-            "update schema (fields to change only)."
-        ),
-    )
-
-
-class UpdateTestCaseFromStepsInput(BaseModel):
     code: str = Field(
         ...,
         description="Code of the existing TaskTracker test case to update, e.g. `PVM-123`.",
@@ -202,10 +201,6 @@ def _create_test_case_from_steps(**kwargs: Any) -> Any:
             for s in args["steps"]
         ]
     return _call_mcp_sync("create_test_case_from_steps", args)
-
-
-def _update_test_case(**kwargs: Any) -> Any:
-    return _call_mcp_sync("update_test_case", kwargs)
 
 
 def _update_test_case_from_steps(**kwargs: Any) -> Any:
@@ -270,9 +265,9 @@ def create_test_case_tool() -> StructuredTool:
     return StructuredTool.from_function(
         name="create_test_case",
         description=(
-            "Low-level TaskTracker test creation tool. "
-            "Takes a full `test_case_json` payload that already matches the API schema. "
-            "Prefer `create_test_case_from_steps` for normal usage."
+            "High-level TaskTracker test creation tool. "
+            "Provide summary, suit, space, folder_code, and an ordered list of steps. "
+            "The tool builds a safe base JSON from the canonical example and creates the test case."
         ),
         func=_create_test_case,
         args_schema=CreateTestCaseInput,
@@ -296,18 +291,6 @@ def create_test_case_from_steps_tool() -> StructuredTool:
 
 def update_test_case_tool() -> StructuredTool:
     return StructuredTool.from_function(
-        name="update_test_case",
-        description=(
-            "Low-level: update an existing TaskTracker test case by code using a JSON patch body. "
-            "Prefer update_test_case_from_steps when only changing steps."
-        ),
-        func=_update_test_case,
-        args_schema=UpdateTestCaseInput,
-    )
-
-
-def update_test_case_from_steps_tool() -> StructuredTool:
-    return StructuredTool.from_function(
         name="update_test_case_from_steps",
         description=(
             "Update an existing test case's steps by code. Provide the test case code and "
@@ -315,5 +298,5 @@ def update_test_case_from_steps_tool() -> StructuredTool:
             "The tool builds the correct patch body and calls the API."
         ),
         func=_update_test_case_from_steps,
-        args_schema=UpdateTestCaseFromStepsInput,
+        args_schema=UpdateTestCaseInput,
     )

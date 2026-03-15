@@ -38,6 +38,9 @@ So: **source folder = template; target folder = where the generated tests live.*
   - the **TaskTracker API** defined in `api-docs.yaml` (for folders, test cases, updates, deletes),
   - any supporting utilities needed for reasoning over JSON test case structures.
 - **External system**: **TaskTracker** – our platform for managing tasks and test runs; it exposes an API to manage test cases.
+- **MCP server**: FastMCP-based TaskTracker MCP server in `src/mcp/tasktracker_server.py` that exposes folder and test case operations as MCP tools for Cursor and other MCP hosts.
+- **LangChain MCP tools**: `src/mcp/tasktracker_client_tools.py` defines LangChain `StructuredTool`s that call the MCP server in-process so the Deep Agent and MCP clients share a single authoritative TaskTracker integration path.
+- **Shared step helpers**: `src/tasktracker/steps.py` centralizes building and updating TaskTracker test steps (including ProseMirror formatted text) so both the MCP server and Deep Agent use the same logic.
 
 ---
 
@@ -60,11 +63,16 @@ The actual HTTP endpoints and payload shapes are implemented in `src/tasktracker
 
 - **Type**: Single deep agent created via `deepagents.create_deep_agent` that runs in a **loop** (reason → optional tool calls → reason again) until it can answer or finish the task.
 - **LLM skill**: A Deep Agents-compatible chat model built on `GigaChat` (`langchain-gigachat`), configured via environment variables and `src/config.py`.
-- **TaskTracker skills / tools** (implemented in `src/tasktracker/tools.py`, backed by `src/tasktracker/client.py` and `api-docs.yaml`):
-  - `get_test_cases(folder)` – list test cases in a folder (using the TaskTracker TMS plugin endpoints).
-  - `create_test_case(folder, test_case_json)` – create one test case in a folder (using the unit creation endpoints and appropriate folder linkage).
-  - `update_test_case(test_case_id, test_case_json)` – update an existing test case.
-  - `delete_test_case(test_case_id)` – delete a test case.
+- **TaskTracker skills / tools**:
+  - **Low-level HTTP client** in `src/tasktracker/client.py` (with dry-run wrapper in `src/tasktracker/dry_run_client.py`) wraps the TaskTracker REST API.
+  - **MCP server** in `src/mcp/tasktracker_server.py` exposes folder and test case operations as MCP tools (e.g. `get_root_folder_units`, `create_folder`, `get_test_cases`, `get_test_case`, `create_test_case`, `update_test_case_from_steps`).
+  - **LangChain MCP tools** in `src/mcp/tasktracker_client_tools.py` provide `StructuredTool`s that call the MCP server in-process; `src/agent/tools.py` now re-exports these and is marked deprecated for new code.
+  - **Shared helpers** in `src/tasktracker/steps.py` and `src/tasktracker/tools.py` centralize step JSON construction and low-level API calls so both the MCP server and Deep Agent stay in sync.
+  - Typical operations from the agent’s point of view:
+    - `get_root_folder_units` – discover folder hierarchy and root-level units.
+    - `get_test_cases` / `get_test_case` – read existing tests to use as templates.
+    - `create_test_case` / `create_test_case_from_steps` – create new tests in a target folder from a summary plus steps.
+    - `update_test_case_from_steps` – update the steps of an existing test case by code while preserving step codes.
 - **System prompt** (see `src/agent/prompts.py`): Instructs the agent to (1) identify source and target folders, (2) fetch source tests, (3) generate adapted test case JSON, (4) create them in the target folder. It should keep JSON structure consistent with the source unless the user asks otherwise.
 - **Entrypoint**: CLI in `src/main.py`; one-shot or interactive; the CLI sends user instructions to the deep agent and prints the agent’s final answer (and, optionally, debug JSON).
 

@@ -12,7 +12,8 @@ from typing import Any
 from fastmcp import FastMCP
 
 from src.tasktracker.steps import (
-    create_test_case_from_steps as steps_create,
+    TestStepSpec,
+    create_test_case_with_summary,
     update_test_case_from_steps as steps_update_from_steps,
 )
 from src.tasktracker.tools import (
@@ -101,43 +102,39 @@ def get_test_case(code: str) -> dict[str, Any]:
 
 
 @mcp.tool()
-def create_test_case(suit: str, test_case_json: dict[str, Any]) -> dict[str, Any]:
-    """
-    Low-level test creation. test_case_json must match TaskTracker API schema.
-    Prefer create_test_case_from_steps for normal usage.
-    """
-    result = tt_create_test_case(
-        suit=suit,
-        test_case_json=test_case_json,
-    )
-    return _serialize_result(result)
-
-
-@mcp.tool()
-def create_test_case_from_steps(
+def create_test_case(
+    summary: str,
     suit: str,
-    test_case_base: dict[str, Any],
+    space: str,
+    folder_code: str,
     steps: list[dict[str, Any]],
 ) -> dict[str, Any]:
     """
-    Create a new test case from a base JSON payload and an ordered list of steps.
-    Each step is an object with step_description, step_data (optional), step_result.
-    The tool builds the attributes.test_step structure and calls the API.
+    High-level test creation tool.
+
+    - `summary`: human-readable test case title.
+    - `suit`: TaskTracker suit code (usually `test_case`).
+    - `space`: TaskTracker space code (e.g. `PVM`, `VIEW`).
+    - `folder_code`: TaskTracker folder identifier to place the test in.
+    - `steps`: ordered list of steps, each with step_description, step_data (optional), step_result.
+
+    The tool builds a safe base payload from the canonical example JSON and
+    injects the steps; callers cannot pass arbitrary JSON bodies.
     """
-    result = steps_create(
+    step_specs: list[TestStepSpec] = [
+        TestStepSpec(
+            step_description=s.get("step_description", ""),
+            step_data=s.get("step_data", ""),
+            step_result=s.get("step_result", ""),
+        )
+        for s in steps
+    ]
+    result = create_test_case_with_summary(
+        summary=summary,
         suit=suit,
-        test_case_base=test_case_base,
-        steps=steps,
-    )
-    return _serialize_result(result)
-
-
-@mcp.tool()
-def update_test_case(code: str, patch_json: dict[str, Any]) -> dict[str, Any]:
-    """Update an existing TaskTracker test case by code using a JSON patch body."""
-    result = tt_update_test_case(
-        code=code,
-        patch_json=patch_json,
+        space=space,
+        folder_code=folder_code,
+        steps=step_specs,
     )
     return _serialize_result(result)
 
@@ -145,11 +142,22 @@ def update_test_case(code: str, patch_json: dict[str, Any]) -> dict[str, Any]:
 @mcp.tool()
 def update_test_case_from_steps(code: str, steps: list[dict[str, Any]]) -> dict[str, Any]:
     """
-    Update an existing test case's steps by code. Provide an ordered list of steps;
-    each step is an object with step_description, step_data (optional), step_result.
-    The tool builds the correct patch body and calls the API.
+    Update an existing test case's steps by code.
+
+    This tool:
+    - Fetches the current test case to preserve existing step codes.
+    - Builds the appropriate `attributes.test_step.testStepList` patch body.
+    - Calls the TaskTracker update API.
     """
-    result = steps_update_from_steps(code=code, steps=steps)
+    step_specs: list[TestStepSpec] = [
+        TestStepSpec(
+            step_description=s.get("step_description", ""),
+            step_data=s.get("step_data", ""),
+            step_result=s.get("step_result", ""),
+        )
+        for s in steps
+    ]
+    result = steps_update_from_steps(code=code, steps=step_specs)
     return _serialize_result(result)
 
 

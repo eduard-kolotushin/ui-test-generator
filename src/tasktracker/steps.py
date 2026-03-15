@@ -162,6 +162,9 @@ def create_test_case_from_steps(
     Normally you should use `create_test_case_with_summary` so the base payload
     is derived from the canonical example; this helper exists for advanced use
     cases where the caller controls the full base JSON.
+
+    Payload shape matches test_case_json_example.json: attributes is a flat dict
+    with attributes.test_step as the array of steps.
     """
     payload = deepcopy(test_case_base)
     attributes = payload.setdefault("attributes", {})

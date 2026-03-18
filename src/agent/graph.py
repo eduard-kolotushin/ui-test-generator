@@ -5,7 +5,7 @@ import httpx
 
 from deepagents import create_deep_agent
 from langgraph.types import Command
-from deepagents.backends import CompositeBackend, StateBackend, StoreBackend
+from deepagents.backends import CompositeBackend, StateBackend, StoreBackend, FilesystemBackend
 from langchain_gigachat import GigaChat
 from langchain_openai import ChatOpenAI
 from langgraph.checkpoint.memory import InMemorySaver
@@ -132,6 +132,7 @@ def build_backend() -> Any:
             default=StateBackend(runtime),
             routes={
                 "/memories/": StoreBackend(runtime),
+                "/skills/": FilesystemBackend(root_dir="./skills", virtual_mode=True),
             },
         )
 
@@ -195,7 +196,7 @@ def build_agent() -> Any:
         model=model,
         tools=tools,
         system_prompt=SYSTEM_PROMPT,
-        skills=["skills/tasktracker"],
+        skills=["/skills/"],
         checkpointer=checkpointer,
         backend=backend,
         store=store,

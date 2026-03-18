@@ -23,6 +23,7 @@ The agent:
 
 ```bash
 pip install uv
+export PATH="$HOME/Library/Python/3.13/bin:$PATH"
 ```
 
 2. **Install dependencies**:
@@ -52,7 +53,7 @@ uv sync
 4. **Run the agent**:
 
 ```bash
-uv run python -m src.main "Generate tests in folder 'abyss datasource' based on 'postgres datasource'."
+uv run python -m src.main single-run --prompt "Generate tests in folder 'abyss datasource' based on 'postgres datasource'."
 ```
 
 This will construct a Deep Agent with TaskTracker tools and print the model’s final response.

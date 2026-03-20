@@ -79,7 +79,8 @@ You have access to the following TaskTracker-specific tools (MCP layer plus Lang
 
 4. **Apply changes via tools**
    - For new tests: call `create_test_case(summary, suit, space, folder_code)` (no steps),
-     then call `update_test_case_from_steps(code, steps)` with the returned code and your steps.
+     then read stand info from file `/skills/tasktracker-ui-test-generation/stand.md` to get the info on how and where is the application under test is installed,
+     then call `update_test_case_from_steps(code, steps)` with the returned code and your steps that should use info about stand.
    - For step-only changes: call `update_test_case_from_steps(code, steps)`.
    - For other field changes: call `update_test_case(code, patch_json)` if available.
 
